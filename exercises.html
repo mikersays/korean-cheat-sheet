@@ -705,7 +705,7 @@
     color: var(--paper);
   }
 
-/* === BEGIN exercises-only additions (filled in Task 2) === */
+  /* ==================== EXERCISES (practice page only) ==================== */
   /* Exercise card */
   .ex {
     background: var(--paper-soft);
@@ -832,7 +832,7 @@
     .ex-prompt { font-size: 0.96em; }
   }
 
-  /* Print: de-style the 답 tab; the JS in Task 3 force-opens all <details> on beforeprint */
+  /* Print: de-style the 답 tab; a beforeprint handler in <script> force-opens all <details>. */
   @media print {
     details.ex-answer summary,
     details.ex-answer[open] summary {
@@ -851,7 +851,6 @@
   aside ol { counter-reset: none; }
   aside li { counter-increment: none; }
   aside a::before { content: attr(data-num); }
-/* === END exercises-only additions === */
 </style>
 </head>
 <body>
@@ -1002,9 +1001,9 @@
     <div class="ex-head"><span class="ex-num">1.6</span><span class="ex-type">choose</span></div>
     <div class="ex-prompt">Which sentence has the correct Korean SOV word order?
       <ul class="ex-choices">
-        <li>저는 마셔요 커피를.</li>
-        <li>저는 커피를 마셔요.</li>
-        <li>마셔요 저는 커피를.</li>
+        <li><span class="ko">저는 마셔요 커피를.</span></li>
+        <li><span class="ko">저는 커피를 마셔요.</span></li>
+        <li><span class="ko">마셔요 저는 커피를.</span></li>
       </ul>
     </div>
     <details class="ex-answer"><summary aria-label="Reveal answer">답</summary>
