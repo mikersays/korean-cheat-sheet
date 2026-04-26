@@ -460,8 +460,17 @@
     position: relative;
   }
   .callout strong { color: var(--vermillion-deep); }
+  .callout a {
+    color: var(--vermillion-deep);
+    text-decoration: none;
+    border-bottom: 1px solid var(--vermillion-soft);
+    font-weight: 600;
+    transition: border-color 160ms ease;
+  }
+  .callout a:hover { border-bottom-color: var(--vermillion); }
   @media (prefers-color-scheme: dark) {
     .callout strong { color: var(--vermillion); }
+    .callout a { color: var(--vermillion); }
   }
   .callout::before {
     content: "註";
@@ -796,7 +805,7 @@
     <li>That syllable blocks read top-left → top-right → bottom.</li>
   </ul>
   <div class="callout">
-    <strong>Can't read Hangul yet?</strong> Start with the <a href="https://mikersays.github.io/hangeul-reading-guide/" style="color: var(--vermillion-deep); border-bottom: 1px solid var(--vermillion-soft); text-decoration: none;">Hangul Reading Guide</a> — jamo, syllable blocks, batchim, and the sound-change rules that turn spelling into pronunciation. Then come back here.
+    <strong>Can't read Hangul yet?</strong> Start with the <a href="https://mikersays.github.io/hangeul-reading-guide/">Hangul Reading Guide</a> — jamo, syllable blocks, batchim, and the sound-change rules that turn spelling into pronunciation. Then come back here.
   </div>
 </section>
 
