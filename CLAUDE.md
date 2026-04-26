@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Korean Cheat Sheet — Project Notes
 
 Static GitHub Pages site teaching Korean grammar. Has a sister repo that teaches reading Hangul, and the two are designed to be maintained together.
@@ -5,9 +9,12 @@ Static GitHub Pages site teaching Korean grammar. Has a sister repo that teaches
 ## Repo topology
 
 - **This repo** — `mikersays/korean-cheat-sheet` → https://mikersays.github.io/korean-cheat-sheet/
-  - `grammar-cheatsheet.html` — the whole site (CSS + content in one file)
-  - `index.html` — meta-refresh redirect
-  - `grammar-cheatsheet.md` — earlier markdown source, kept for reference; **HTML is the source of truth**
+  - `grammar-cheatsheet.html` — the cheat sheet (CSS + content in one file). Source of truth.
+  - `exercises.html` — practice companion. Sections `s0`–`s23` mirror cheat-sheet section IDs (note: `s17` and `s22` intentionally skipped). Click-to-reveal answers via `<details class="ex-answer"><summary>답</summary>…</details>`. Linked from the cheat sheet in three places.
+  - `flashcards.html` — click-to-flip card deck (3D flip via `transform: rotateY`). Cards are an embedded JS array drawn from all 25 cheat-sheet sections. Filter dropdown, shuffle, keyboard (`Space` flip, `←`/`→` navigate). Single column, no sidebar.
+  - `index.html` — meta-refresh redirect to the cheat sheet.
+  - `grammar-cheatsheet.md` — earlier markdown source, kept for reference.
+  - `docs/superpowers/{plans,specs}/` — dated design notes (e.g. `2026-04-26-grammar-practice-page-*.md`). Reference only; not deployed.
 - **Sister repo** — `mikersays/hangeul-reading-guide` → https://mikersays.github.io/hangeul-reading-guide/
   - Local path: `../hangeul-reading-guide/`
   - Same single-HTML-file layout, same CSS lifted from this repo
@@ -36,6 +43,27 @@ Section headers use a vermillion seal-stamp number (`<span class="num">NN</span>
 - `.endings` — two-column quick reference (used in §23)
 
 Sister repo also has: `.jamo-grid` / `.jamo-cell`, `.walk` / `.step`, `.diagram` (inline SVG). Don't add those here unless a section needs them.
+
+**Practice page only** (`exercises.html`):
+
+- `.ex` — exercise card (vermillion left rule, paper-soft background)
+- `.ex-head` / `.ex-num` / `.ex-type` — header row: number + small celadon uppercase type label (`identify`, `choose`, `write`, `build`, etc.)
+- `.ex-prompt` — question body; `.ex-prompt ul.ex-choices` for multiple-choice options (rendered with ○ markers)
+- `details.ex-answer` + `<summary>답</summary>` — vermillion stamp-style reveal button. A `beforeprint` handler force-opens all `<details>` so printed copies show solutions.
+- `.ex-solution` — answer block (paper background, vermillion left rule)
+- `.section-lede` — italic intro paragraph that links back to the matching cheat-sheet section
+
+**Flash cards only** (`flashcards.html`):
+
+- `.toolbar` — section filter (`<select>`) + shuffle button + deck counter
+- `.card-frame` / `.card` / `.face` — 3D flip container. `.card.flipped` toggles `transform: rotateY(180deg)`; both faces use `backface-visibility: hidden`. Front and back are positioned absolutely inside the frame.
+- `.card-section`, `.card-content`, `.card-flip-hint` — small celadon section label, centered card body, small uppercase keyboard hint
+- `.card-nav` — prev/next pair below the card; deck wraps at both ends
+- Card data lives in a JS `cards` array of `{ section, front, back }`. `front` and `back` are HTML strings that may contain `<span class="ko">…</span>` for Korean.
+
+## Section IDs
+
+Cheat-sheet sections use `id="sN"` (e.g. `#s12`). The practice page mirrors these exactly so deep links work both directions. The flash-cards deck uses the same `sN` strings as filter values. When adding a section, add it in all three files with the same ID, and add the cross-links in both directions.
 
 ## Translation/pronunciation policy
 
@@ -74,3 +102,4 @@ If you add a new prerequisite or sequel, follow the same three-place pattern.
 - **Don't dispatch parallel subagents writing to the same file.** Have each agent emit content with `=== sN ===` markers to its own `_content_partN.html`, then a small integration script merges them. Always clean up the temp content files after merging.
 - **Don't amend pushed commits** — create a new commit. Both repos are public.
 - **Don't introduce romanization** even casually in comments or examples. The "no romanization" stance is a feature.
+- **Don't renumber existing section IDs.** `s17` and `s22` are intentionally absent on the practice page; preserve the gap rather than renumbering to close it — external bookmarks and cross-links rely on stable IDs.

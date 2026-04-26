@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korean Grammar Flash Cards · 카드</title>
+<meta name="description" content="Click-to-flip flash cards drawn from the Korean Grammar Cheat Sheet — particles, conjugation, connectors, and sentence-final patterns.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper:        #f1ead6;
+    --paper-deep:   #ebe2c8;
+    --paper-soft:   #f6f0dd;
+    --ink:          #1a1612;
+    --ink-soft:     #4a4337;
+    --ink-faint:    #8a8170;
+    --rule:         #d6cab0;
+    --rule-soft:    #e3d9bf;
+    --vermillion:   #c8362a;
+    --vermillion-deep: #9c2418;
+    --vermillion-soft: rgba(200, 54, 42, 0.08);
+    --celadon:      #5d8275;
+    --shadow-soft:  0 1px 0 rgba(26, 22, 18, 0.04);
+    --shadow-stamp: 1px 2px 0 rgba(26, 22, 18, 0.08), inset 0 0 0 1px rgba(255, 245, 220, 0.06);
+    --shadow-card:  0 1px 0 rgba(26, 22, 18, 0.05), 0 8px 28px -16px rgba(26, 22, 18, 0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:        #181410;
+      --paper-deep:   #211c16;
+      --paper-soft:   #1f1a14;
+      --ink:          #ebe2cc;
+      --ink-soft:     #b8af9a;
+      --ink-faint:    #7a7264;
+      --rule:         #3a322a;
+      --rule-soft:    #2a241e;
+      --vermillion:   #d6594b;
+      --vermillion-deep: #b03828;
+      --vermillion-soft: rgba(214, 89, 75, 0.12);
+      --celadon:      #7fa898;
+      --shadow-soft:  0 1px 0 rgba(0, 0, 0, 0.3);
+      --shadow-stamp: 1px 2px 0 rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      --shadow-card:  0 1px 0 rgba(0, 0, 0, 0.4), 0 8px 32px -14px rgba(0, 0, 0, 0.55);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Newsreader', 'Iowan Old Style', Charter, Georgia, serif;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 16;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.62;
+    font-size: 17.5px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Hanji paper grain */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1, 0 0 0 0 0.08, 0 0 0 0 0.05, 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  @media (prefers-color-scheme: dark) {
+    body::before { mix-blend-mode: screen; opacity: 0.3; }
+  }
+
+  /* Korean text */
+  .ko {
+    font-family: 'Gowun Batang', 'Apple SD Gothic Neo', 'Noto Serif KR', 'Nanum Myeongjo', serif;
+    font-weight: 400;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* English gloss */
+  .en {
+    display: block;
+    margin-top: 3px;
+    color: var(--ink-faint);
+    font-style: italic;
+    font-family: 'Newsreader', serif;
+    font-size: 0.86em;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+
+  strong { font-weight: 700; color: var(--ink); }
+  p { margin: 0 0 14px; }
+
+  /* ==================== LAYOUT ==================== */
+
+  .layout {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 32px 100px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ==================== HERO ==================== */
+
+  header.title {
+    margin: 0 0 56px;
+    position: relative;
+  }
+
+  .eyebrow-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin: 0 0 28px;
+  }
+  .eyebrow-row .dot {
+    width: 6px; height: 6px;
+    background: var(--vermillion);
+    border-radius: 50%;
+    flex: none;
+  }
+  .eyebrow-row .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  header.title h1 {
+    font-family: 'Fraunces', 'Newsreader', serif;
+    font-variation-settings: 'opsz' 144, 'wght' 600, 'SOFT' 50, 'WONK' 0;
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 0.92;
+    margin: 0;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+  header.title h1 .display-row { display: block; }
+  header.title h1 .display-row.muted {
+    color: var(--ink-soft);
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'wght' 400, 'SOFT' 100, 'WONK' 1;
+  }
+  header.title h1 .ko-title {
+    font-family: 'Gowun Batang', 'Noto Serif KR', serif;
+    color: var(--vermillion);
+    font-weight: 700;
+    font-size: 0.78em;
+    letter-spacing: -0.01em;
+    display: inline-block;
+    margin-top: 0.06em;
+  }
+
+  header.title .lede {
+    font-family: 'Newsreader', serif;
+    font-variation-settings: 'opsz' 32, 'wght' 350;
+    font-style: italic;
+    font-size: clamp(17px, 1.5vw, 21px);
+    color: var(--ink-soft);
+    margin: 36px 0 0;
+    max-width: 56ch;
+    line-height: 1.45;
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+  }
+  header.title .lede a {
+    color: var(--vermillion);
+    text-decoration: none;
+    border-bottom: 1px solid var(--vermillion-soft);
+    transition: border-color 160ms ease;
+  }
+  header.title .lede a:hover { border-bottom-color: var(--vermillion); }
+  header.title .lede kbd {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.86em;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule-soft);
+    border-radius: 2px;
+    padding: 1px 6px;
+    font-style: normal;
+    color: var(--ink-soft);
+  }
+
+  /* ==================== TOOLBAR ==================== */
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 22px;
+    flex-wrap: wrap;
+  }
+  .toolbar select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--paper-soft);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 8px 30px 8px 12px;
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    font-size: 13px;
+    line-height: 1.2;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%238a8170' stroke-width='1.4' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color 160ms ease, color 160ms ease;
+  }
+  .toolbar select:hover,
+  .toolbar select:focus {
+    border-color: var(--vermillion);
+    color: var(--vermillion);
+    outline: none;
+  }
+
+  .toolbar .shuffle {
+    background: var(--paper-soft);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 8px 14px;
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+  }
+  .toolbar .shuffle:hover,
+  .toolbar .shuffle:focus {
+    border-color: var(--vermillion);
+    color: var(--vermillion);
+    outline: none;
+  }
+  .toolbar .shuffle .stamp {
+    color: var(--vermillion);
+    font-family: 'Gowun Batang', serif;
+    margin-right: 6px;
+    font-weight: 700;
+  }
+
+  .toolbar .deck-meta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+  }
+
+  /* ==================== CARD ==================== */
+
+  .card-frame {
+    perspective: 1600px;
+    margin: 0 0 22px;
+  }
+
+  .card {
+    position: relative;
+    width: 100%;
+    min-height: 320px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 480ms cubic-bezier(0.2, 0.85, 0.3, 1.05);
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    display: block;
+  }
+  .card:focus-visible {
+    outline: 2px solid var(--vermillion);
+    outline-offset: 6px;
+    border-radius: 2px;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card .face {
+    position: absolute;
+    inset: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--vermillion);
+    border-radius: 2px;
+    padding: 36px 38px 30px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 320px;
+  }
+  .card .face.back {
+    transform: rotateY(180deg);
+    background: var(--paper);
+  }
+
+  .card-section {
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--celadon);
+    font-weight: 600;
+    margin: 0 0 18px;
+  }
+  .card .face.back .card-section { color: var(--vermillion); }
+
+  .card-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: 'Newsreader', 'Iowan Old Style', serif;
+    color: var(--ink);
+  }
+  .card .face.front .card-content {
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1.35;
+    font-weight: 500;
+  }
+  .card .face.front .card-content .ko {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .card .face.back .card-content {
+    font-size: clamp(16px, 1.65vw, 19px);
+    line-height: 1.6;
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  .card .face.back .card-content .ko {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .card-flip-hint {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    margin-top: 22px;
+  }
+  .card-flip-hint kbd {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.92em;
+    background: var(--paper-deep);
+    border: 1px solid var(--rule-soft);
+    border-radius: 2px;
+    padding: 1px 5px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* ==================== NAV ==================== */
+
+  .card-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 28px;
+  }
+  .card-nav button {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 9px 18px;
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+    min-width: 112px;
+  }
+  .card-nav button:hover,
+  .card-nav button:focus {
+    border-color: var(--vermillion);
+    color: var(--vermillion);
+    outline: none;
+  }
+
+  /* ==================== CALLOUT ==================== */
+
+  .callout {
+    background: var(--vermillion-soft);
+    border-left: 3px solid var(--vermillion);
+    margin: 22px 0 0;
+    padding: 14px 18px 14px 20px;
+    border-radius: 0 1px 1px 0;
+    color: var(--ink);
+    position: relative;
+    font-size: 14.5px;
+  }
+  .callout strong { color: var(--vermillion-deep); }
+  .callout::before {
+    content: "註";
+    position: absolute;
+    top: -10px;
+    left: 14px;
+    background: var(--paper);
+    color: var(--vermillion);
+    font-family: 'Gowun Batang', serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 0 6px;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+  .callout kbd {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.88em;
+    background: var(--paper);
+    border: 1px solid var(--rule-soft);
+    border-radius: 2px;
+    padding: 1px 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .callout strong { color: var(--vermillion); }
+  }
+
+  /* ==================== FOOTER ==================== */
+
+  footer {
+    margin-top: 80px;
+    padding-top: 28px;
+    border-top: 1px solid var(--ink);
+    color: var(--ink-faint);
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer a {
+    color: var(--vermillion);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 160ms ease;
+  }
+  footer a:hover { border-bottom-color: var(--vermillion); }
+  footer .seal {
+    width: 28px; height: 28px;
+    background: var(--vermillion);
+    color: var(--paper);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Gowun Batang', serif;
+    font-size: 14px;
+    font-weight: 700;
+    transform: rotate(-2deg);
+    border-radius: 1px;
+    text-transform: none;
+    letter-spacing: 0;
+    box-shadow: var(--shadow-stamp);
+  }
+
+  /* ==================== MOTION ==================== */
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    header.title .eyebrow-row { opacity: 0; animation: rise 700ms 60ms ease-out forwards; }
+    header.title h1 .display-row:nth-child(1) { opacity: 0; animation: rise 800ms 180ms ease-out forwards; }
+    header.title h1 .display-row:nth-child(2) { opacity: 0; animation: rise 800ms 280ms ease-out forwards; }
+    header.title h1 .display-row:nth-child(3) { opacity: 0; animation: rise 800ms 380ms ease-out forwards; }
+    header.title .lede { opacity: 0; animation: rise 800ms 520ms ease-out forwards; }
+    .toolbar { opacity: 0; animation: rise 700ms 700ms ease-out forwards; }
+    .card-frame { opacity: 0; animation: rise 800ms 800ms ease-out forwards; }
+    .card-nav { opacity: 0; animation: rise 700ms 920ms ease-out forwards; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+  }
+
+  /* ==================== RESPONSIVE ==================== */
+
+  @media (max-width: 880px) {
+    .layout { padding: 32px 22px 70px; }
+    header.title { margin-bottom: 40px; }
+    .card .face { padding: 28px 26px 22px; min-height: 300px; }
+    .card { min-height: 300px; }
+    .card-flip-hint { margin-top: 16px; }
+    footer { margin-top: 56px; }
+  }
+
+  @media (max-width: 480px) {
+    .layout { padding: 28px 18px 60px; }
+    body { font-size: 16.5px; }
+    header.title h1 { letter-spacing: -0.025em; }
+    header.title .lede { font-size: 16px; }
+    .toolbar { gap: 10px; }
+    .toolbar .deck-meta { margin-left: 0; width: 100%; text-align: right; }
+    .card .face { padding: 22px 20px 18px; min-height: 280px; }
+    .card { min-height: 280px; }
+    .card .face.front .card-content { font-size: 20px; }
+    .card .face.back .card-content { font-size: 15.5px; }
+    .card-nav button { min-width: 0; flex: 1; padding: 9px 12px; }
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--vermillion);
+    color: var(--paper);
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<header class="title">
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span>Flash Cards · 한국어</span>
+    <span class="rule"></span>
+  </div>
+  <h1>
+    <span class="display-row">Korean Grammar</span>
+    <span class="display-row muted">Flash Cards,</span>
+    <span class="display-row"><span class="ko-title">카드</span></span>
+  </h1>
+  <p class="lede">Click-to-flip cards drawn from the <a href="grammar-cheatsheet.html">Korean Grammar Cheat Sheet</a>. Tap or press <kbd>Space</kbd> to flip; <kbd>←</kbd> / <kbd>→</kbd> to navigate. Want written drills instead? Try the <a href="exercises.html">Practice page</a>.</p>
+</header>
+
+<div class="toolbar" role="group" aria-label="Deck controls">
+  <select id="filter" aria-label="Filter cards by section">
+    <option value="all">All sections</option>
+    <option value="s0">§00 · Foundations</option>
+    <option value="s1">§01 · Word Order — SOV</option>
+    <option value="s2">§02 · Particles</option>
+    <option value="s3">§03 · Copula 이다 / 아니다</option>
+    <option value="s4">§04 · Verb / Adjective Stems</option>
+    <option value="s5">§05 · Speech Levels</option>
+    <option value="s6">§06 · Present Tense</option>
+    <option value="s7">§07 · Past Tense</option>
+    <option value="s8">§08 · Future / Probability</option>
+    <option value="s9">§09 · Negation</option>
+    <option value="s10">§10 · Honorifics</option>
+    <option value="s11">§11 · Connectors</option>
+    <option value="s12">§12 · Modifiers</option>
+    <option value="s13">§13 · Nominalization</option>
+    <option value="s14">§14 · Sentence-Final</option>
+    <option value="s15">§15 · Quoting</option>
+    <option value="s16">§16 · Numbers &amp; Counters</option>
+    <option value="s17">§17 · Pronouns</option>
+    <option value="s18">§18 · Question Words</option>
+    <option value="s19">§19 · Causative &amp; Passive</option>
+    <option value="s20">§20 · Irregular Stems</option>
+    <option value="s21">§21 · Building a Sentence</option>
+    <option value="s22">§22 · Decision Tree</option>
+    <option value="s23">§23 · Top 30 Endings</option>
+    <option value="s24">§24 · Study Tips</option>
+  </select>
+  <button id="shuffle" type="button" class="shuffle" aria-label="Shuffle deck">
+    <span class="stamp">⤳</span>Shuffle
+  </button>
+  <span class="deck-meta" id="counter" aria-live="polite">1 / 0</span>
+</div>
+
+<div class="card-frame">
+  <button class="card" id="card" type="button" aria-pressed="false" aria-label="Card — click or press space to flip">
+    <div class="face front">
+      <span class="card-section" id="card-section-front">§ — </span>
+      <div class="card-content" id="card-front"></div>
+      <span class="card-flip-hint">tap or press <kbd>space</kbd> to flip</span>
+    </div>
+    <div class="face back">
+      <span class="card-section" id="card-section-back">§ — answer</span>
+      <div class="card-content" id="card-back"></div>
+    </div>
+  </button>
+</div>
+
+<nav class="card-nav" aria-label="Card navigation">
+  <button id="prev" type="button">← Prev</button>
+  <button id="next" type="button">Next →</button>
+</nav>
+
+<div class="callout">
+  <strong>Keyboard.</strong> <kbd>Space</kbd> to flip · <kbd>←</kbd> / <kbd>→</kbd> to move through the deck. The deck wraps at both ends, so the last card's <em>Next</em> takes you back to the first.
+</div>
+
+<footer>
+  <span><span class="seal">韓</span> &nbsp; Korean Grammar Flash Cards · open the <a href="grammar-cheatsheet.html">Cheat Sheet</a> · drill on the <a href="exercises.html">Practice page</a> · prerequisite: <a href="https://mikersays.github.io/hangeul-reading-guide/">Hangul Reading Guide</a></span>
+  <span>한국어 카드</span>
+</footer>
+
+</div>
+
+<script>
+  const sectionTitles = {
+    s0:  'Foundations',
+    s1:  'Word Order',
+    s2:  'Particles',
+    s3:  'Copula 이다 / 아니다',
+    s4:  'Verb / Adj Stems',
+    s5:  'Speech Levels',
+    s6:  'Present Tense',
+    s7:  'Past Tense',
+    s8:  'Future / Probability',
+    s9:  'Negation',
+    s10: 'Honorifics',
+    s11: 'Connectors',
+    s12: 'Modifiers',
+    s13: 'Nominalization',
+    s14: 'Sentence-Final',
+    s15: 'Quoting',
+    s16: 'Numbers & Counters',
+    s17: 'Pronouns',
+    s18: 'Question Words',
+    s19: 'Causative & Passive',
+    s20: 'Irregular Stems',
+    s21: 'Building a Sentence',
+    s22: 'Decision Tree',
+    s23: 'Top 30 Endings',
+    s24: 'Study Tips'
+  };
+
+  const cards = [
+    { section: "s0", front: "<span class=\"ko\">받침</span> — what is it?", back: "Final consonant of a Hangul block. Drives which particle / ending variant attaches. <span class=\"ko\">학</span> has 받침; <span class=\"ko\">사</span> doesn't." },
+    { section: "s0", front: "Cushion-vowel rule", back: "Insert <span class=\"ko\">으</span> when a consonant-final stem meets a consonant-starting ending. <span class=\"ko\">먹 + (으)면 → 먹으면</span> (if eat)." },
+    { section: "s0", front: "Dictionary form → stem", back: "Drop the <span class=\"ko\">다</span>. All endings attach to the stem. <span class=\"ko\">먹다 → 먹-</span> (eat)." },
+    { section: "s0", front: "<span class=\"ko\">동사</span> vs <span class=\"ko\">형용사</span>", back: "<span class=\"ko\">동사</span> = action verb (<span class=\"ko\">먹다</span>). <span class=\"ko\">형용사</span> = descriptive verb / adjective (<span class=\"ko\">예쁘다</span>). Both conjugate the same way." },
+    { section: "s0", front: "Why so many particle variants?", back: "Korean smooths consonant-vowel mismatches. The variant alternates by 받침: <span class=\"ko\">은/는, 이/가, 을/를</span>." },
+
+    { section: "s1", front: "Korean basic word order", back: "Subject–Object–Verb (SOV). The verb always comes last. <span class=\"ko\">저는 사과를 먹어요.</span> (I eat an apple.)" },
+    { section: "s1", front: "Particles vs. position", back: "Particles attach to nouns and carry the role; word order is loose. You can drop the subject or object when context is clear." },
+
+    { section: "s2", front: "Topic: <span class=\"ko\">은/는</span>", back: "받침 → <span class=\"ko\">은</span>; vowel → <span class=\"ko\">는</span>. 'As for X', for contrast and topic introduction. <span class=\"ko\">저는 학생이에요.</span> (As for me, I'm a student.)" },
+    { section: "s2", front: "Subject: <span class=\"ko\">이/가</span>", back: "받침 → <span class=\"ko\">이</span>; vowel → <span class=\"ko\">가</span>. Marks the grammatical subject; emphasizes 'who'. <span class=\"ko\">누가 왔어요?</span> (Who came?)" },
+    { section: "s2", front: "Object: <span class=\"ko\">을/를</span>", back: "받침 → <span class=\"ko\">을</span>; vowel → <span class=\"ko\">를</span>. Marks the direct object. <span class=\"ko\">책을 읽어요.</span> (I read a book.)" },
+    { section: "s2", front: "Static location / time: <span class=\"ko\">에</span>", back: "Place where something is, destination, or a time. <span class=\"ko\">학교에 가요.</span> (Going to school.) <span class=\"ko\">집에 있어요.</span> (At home.)" },
+    { section: "s2", front: "Action location / source: <span class=\"ko\">에서</span>", back: "Where an action happens, or 'from' a place. <span class=\"ko\">도서관에서 공부해요.</span> (Study at the library.) <span class=\"ko\">한국에서 왔어요.</span> (From Korea.)" },
+    { section: "s2", front: "To a person: <span class=\"ko\">에게 / 한테 / 께</span>", back: "<span class=\"ko\">에게</span> formal · <span class=\"ko\">한테</span> colloquial · <span class=\"ko\">께</span> honorific. <span class=\"ko\">친구한테 선물을 줬어요.</span> (Gave a gift to a friend.)" },
+    { section: "s2", front: "From a person: <span class=\"ko\">에게서 / 한테서</span>", back: "Receiving from a person. <span class=\"ko\">엄마한테서 편지를 받았어요.</span> (Got a letter from mom.)" },
+    { section: "s2", front: "And / with: <span class=\"ko\">와/과, 하고, (이)랑</span>", back: "<span class=\"ko\">와/과</span> formal · <span class=\"ko\">하고</span> neutral · <span class=\"ko\">(이)랑</span> casual. <span class=\"ko\">빵과 우유</span> (bread and milk)." },
+    { section: "s2", front: "Also / too: <span class=\"ko\">도</span>", back: "Replaces <span class=\"ko\">은/는/이/가/을/를</span>; never combine. <span class=\"ko\">저도 가요.</span> (I'm going too.)" },
+    { section: "s2", front: "Only: <span class=\"ko\">만</span>", back: "Marks an exclusive choice. <span class=\"ko\">물만 마셔요.</span> (I drink only water.)" },
+    { section: "s2", front: "Range: <span class=\"ko\">에서~까지 / 부터~까지</span>", back: "<span class=\"ko\">에서~까지</span> for places; <span class=\"ko\">부터~까지</span> for times. <span class=\"ko\">9시부터 6시까지</span> (from 9 to 6)." },
+    { section: "s2", front: "By means / direction: <span class=\"ko\">(으)로</span>", back: "Tool, method, direction. 받침 → <span class=\"ko\">으로</span>; vowel or <span class=\"ko\">ㄹ</span> → <span class=\"ko\">로</span>. <span class=\"ko\">젓가락으로 먹어요.</span> (Eat with chopsticks.)" },
+
+    { section: "s3", front: "Copula <span class=\"ko\">이다</span> — polite present", back: "받침 → <span class=\"ko\">~이에요</span>; vowel → <span class=\"ko\">~예요</span>. <span class=\"ko\">저는 의사예요.</span> (I'm a doctor.)" },
+    { section: "s3", front: "Negative copula: <span class=\"ko\">아니다</span>", back: "'Is not (X)'. Noun takes <span class=\"ko\">이/가</span>, not <span class=\"ko\">은/는/을/를</span>. <span class=\"ko\">저는 학생이 아니에요.</span> (I'm not a student.)" },
+    { section: "s3", front: "Existence / possession: <span class=\"ko\">있다 / 없다</span>", back: "There is / isn't, and have / don't have. <span class=\"ko\">시간이 있어요.</span> (I have time.) <span class=\"ko\">돈이 없어요.</span> (No money.)" },
+
+    { section: "s4", front: "How to find a verb stem", back: "Dictionary form = stem + <span class=\"ko\">다</span>. Drop the <span class=\"ko\">다</span>; attach all endings to the stem. <span class=\"ko\">예쁘다 → 예쁘-</span>." },
+    { section: "s4", front: "Adjectives conjugate like verbs", back: "No copula needed — descriptive verbs take the same endings as action verbs. <span class=\"ko\">하늘이 파래요.</span> (The sky is blue.)" },
+
+    { section: "s5", front: "<span class=\"ko\">해요체</span> — polite", back: "Most common everyday level. Endings: <span class=\"ko\">~아요/어요</span>. Default for talking to most adults." },
+    { section: "s5", front: "<span class=\"ko\">반말</span> — casual", back: "Friends, family, kids. Drop the <span class=\"ko\">요</span>: <span class=\"ko\">~아/어/해</span>. Wrong audience = rude." },
+    { section: "s5", front: "<span class=\"ko\">하십시오체</span> — formal", back: "News, business, military, announcements. Endings: <span class=\"ko\">~(스)ㅂ니다 / ~(스)ㅂ니까?</span>" },
+    { section: "s5", front: "<span class=\"ko\">한다체</span> — plain / written", back: "Books, diaries, headlines. Verbs take <span class=\"ko\">~ㄴ다 / ~는다</span>; adjectives & <span class=\"ko\">이다</span> stay bare <span class=\"ko\">~다</span>." },
+
+    { section: "s6", front: "Present tense — vowel rule", back: "Stem's last vowel <span class=\"ko\">ㅏ, ㅗ</span> → <span class=\"ko\">~아요</span>. Anything else → <span class=\"ko\">~어요</span>. <span class=\"ko\">하-</span> → <span class=\"ko\">해요</span>." },
+    { section: "s6", front: "Vowel contractions in present", back: "Stems ending in vowels merge: <span class=\"ko\">가 + 아요 → 가요</span>, <span class=\"ko\">보 + 아요 → 봐요</span>, <span class=\"ko\">주 + 어요 → 줘요</span>." },
+    { section: "s6", front: "Formal present: <span class=\"ko\">~(스)ㅂ니다</span>", back: "Vowel-final stem → <span class=\"ko\">~ㅂ니다</span>; consonant-final → <span class=\"ko\">~습니다</span>. <span class=\"ko\">가다 → 갑니다</span>; <span class=\"ko\">먹다 → 먹습니다</span>." },
+
+    { section: "s7", front: "Past tense: <span class=\"ko\">~았/었/했어요</span>", back: "Same vowel rule as present, with <span class=\"ko\">ㅆ</span> baked in. <span class=\"ko\">가다 → 갔어요</span> (went). <span class=\"ko\">먹다 → 먹었어요</span> (ate)." },
+    { section: "s7", front: "Formal past: <span class=\"ko\">~았/었습니다</span>", back: "Add <span class=\"ko\">습니다</span> to the past root. <span class=\"ko\">갔습니다</span> (went, formal)." },
+
+    { section: "s8", front: "Future: <span class=\"ko\">~(으)ㄹ 거예요</span>", back: "받침 → <span class=\"ko\">을 거예요</span>; vowel → <span class=\"ko\">ㄹ 거예요</span>. Also covers 'probably'. <span class=\"ko\">갈 거예요.</span> (will go / probably go)" },
+    { section: "s8", front: "<span class=\"ko\">~겠~</span>", back: "Intention, strong assumption, or politeness softener. <span class=\"ko\">맛있겠어요!</span> (Looks delicious!) <span class=\"ko\">알겠어요.</span> (Got it.)" },
+    { section: "s8", front: "Plan / intention: <span class=\"ko\">~(으)려고 하다</span>", back: "Intending / planning to. <span class=\"ko\">한국에 가려고 해요.</span> (I'm planning to go to Korea.)" },
+
+    { section: "s9", front: "Short negation: <span class=\"ko\">안</span>", back: "Adverb placed directly before the verb. <span class=\"ko\">안 먹어요.</span> (I don't eat.)" },
+    { section: "s9", front: "Long negation: <span class=\"ko\">~지 않다</span>", back: "Stem + <span class=\"ko\">지 않다</span>. Slightly more formal. <span class=\"ko\">먹지 않아요.</span> (I don't eat.)" },
+    { section: "s9", front: "Inability: <span class=\"ko\">못</span> / <span class=\"ko\">~지 못하다</span>", back: "Short: <span class=\"ko\">못 가요.</span> (Can't go.) Long: <span class=\"ko\">가지 못해요.</span> Use over <span class=\"ko\">안</span> when blocked, not unwilling." },
+    { section: "s9", front: "Negative imperative: <span class=\"ko\">~지 마세요</span>", back: "'Don't do X.' <span class=\"ko\">가지 마세요.</span> (Don't go.) Common on signs and warnings." },
+    { section: "s9", front: "<span class=\"ko\">하다</span> verbs split for <span class=\"ko\">안</span>", back: "Negate the noun part: <span class=\"ko\">공부 안 해요</span>, not <span class=\"ko\">안 공부해요</span>. The <span class=\"ko\">안</span> hugs the <span class=\"ko\">하다</span>." },
+
+    { section: "s10", front: "Honorific marker: <span class=\"ko\">~(으)시~</span>", back: "Insert <span class=\"ko\">시</span> in the stem to honor the subject. <span class=\"ko\">가다 → 가시다 → 가세요.</span> (go [hon.])" },
+    { section: "s10", front: "Lexically honorific verbs", back: "<span class=\"ko\">먹다 → 드시다</span> (eat), <span class=\"ko\">자다 → 주무시다</span> (sleep), <span class=\"ko\">있다 → 계시다</span> (be present)." },
+    { section: "s10", front: "Honorific particles: <span class=\"ko\">께서, 께</span>", back: "<span class=\"ko\">께서</span> for an honored subject; <span class=\"ko\">께</span> for an honored recipient. More respectful than <span class=\"ko\">이/가, 에게</span>." },
+    { section: "s10", front: "Humble forms (lower yourself)", back: "<span class=\"ko\">드리다</span> (give humbly), <span class=\"ko\">뵙다</span> (see/meet), <span class=\"ko\">여쭙다</span> (ask). Lower yourself to raise the listener." },
+
+    { section: "s11", front: "<span class=\"ko\">~고</span> (and / and then)", back: "Sequential 'and then' — neutral on subject. <span class=\"ko\">먹고 자요.</span> (I eat, then sleep.)" },
+    { section: "s11", front: "<span class=\"ko\">~아/어서</span>", back: "Sequential (same subject) or 'because'. <span class=\"ko\">학교에 가서 공부해요.</span> (I go to school and study there.)" },
+    { section: "s11", front: "<span class=\"ko\">~(으)니까</span>", back: "Subjective 'because' — opinions, requests, commands. <span class=\"ko\">비가 오니까 우산 가져가요.</span> (Since it's raining, take an umbrella.)" },
+    { section: "s11", front: "<span class=\"ko\">~지만</span>", back: "Direct contrast: 'but'. <span class=\"ko\">좋지만 비싸요.</span> (It's good, but expensive.)" },
+    { section: "s11", front: "<span class=\"ko\">~는데 / ~(으)ㄴ데</span>", back: "Background context or soft contrast — the duct tape of conversation. <span class=\"ko\">먹었는데 배고파요.</span> (I ate, but I'm still hungry.)" },
+    { section: "s11", front: "<span class=\"ko\">~(으)면</span>", back: "Conditional 'if'. <span class=\"ko\">시간 있으면 만나요.</span> (If you have time, let's meet.)" },
+    { section: "s11", front: "<span class=\"ko\">~(으)면서</span>", back: "Simultaneous 'while'. <span class=\"ko\">음악 들으면서 공부해요.</span> (I study while listening to music.)" },
+    { section: "s11", front: "<span class=\"ko\">~(으)러</span>", back: "'In order to', but only with go / come / verbs of motion. <span class=\"ko\">밥 먹으러 가요.</span> (I'm going to eat.)" },
+    { section: "s11", front: "<span class=\"ko\">~기 위해서</span>", back: "'In order to / for' — works with any verb, not just motion. <span class=\"ko\">건강을 위해서 운동해요.</span> (I exercise for my health.)" },
+    { section: "s11", front: "<span class=\"ko\">~아/어도</span>", back: "Concessive 'even if / even though'. <span class=\"ko\">비싸도 살 거예요.</span> (Even if it's expensive, I'll buy it.)" },
+    { section: "s11", front: "<span class=\"ko\">~거나</span>", back: "Alternative 'or' between verbs. <span class=\"ko\">영화 보거나 책 읽어요.</span> (I watch movies or read books.)" },
+
+    { section: "s12", front: "Past noun-modifier: <span class=\"ko\">~(으)ㄴ</span>", back: "For past actions modifying a noun. <span class=\"ko\">어제 본 영화</span> (the movie I saw yesterday)." },
+    { section: "s12", front: "Present noun-modifier", back: "Action verb → <span class=\"ko\">~는</span>; adjective → <span class=\"ko\">~(으)ㄴ</span>. <span class=\"ko\">지금 보는 영화</span> (the movie I'm watching), <span class=\"ko\">예쁜 사람</span> (a pretty person)." },
+    { section: "s12", front: "Future noun-modifier: <span class=\"ko\">~(으)ㄹ</span>", back: "Same form for action and descriptive verbs. <span class=\"ko\">내일 볼 영화</span> (the movie I'll watch tomorrow)." },
+
+    { section: "s13", front: "Nominalization: <span class=\"ko\">~기</span>", back: "Generic 'the act of -ing'. <span class=\"ko\">한국어 공부하기가 어려워요.</span> (Studying Korean is hard.)" },
+    { section: "s13", front: "Nominalization: <span class=\"ko\">~(으)ㅁ</span>", back: "More abstract or written. Common in fixed nouns: <span class=\"ko\">모임</span> (gathering), <span class=\"ko\">믿음</span> (belief)." },
+    { section: "s13", front: "Nominalization: <span class=\"ko\">~는 것</span>", back: "'The thing of -ing'. Most common in speech. <span class=\"ko\">영화 보는 것을 좋아해요.</span> (I like watching movies.)" },
+
+    { section: "s14", front: "<span class=\"ko\">~고 싶다</span>", back: "Want to do (only first/second person directly). <span class=\"ko\">집에 가고 싶어요.</span> (I want to go home.)" },
+    { section: "s14", front: "<span class=\"ko\">~아/어 보다</span>", back: "Try doing. <span class=\"ko\">한번 먹어 봐요.</span> (Try eating it once.)" },
+    { section: "s14", front: "<span class=\"ko\">~아/어 주다</span>", back: "Do something for someone. With request: please. <span class=\"ko\">도와 주세요.</span> (Please help me.)" },
+    { section: "s14", front: "<span class=\"ko\">~아/어야 하다/되다</span>", back: "Have to / must. <span class=\"ko\">일찍 가야 해요.</span> (I have to go early.)" },
+    { section: "s14", front: "<span class=\"ko\">~아/어도 되다</span>", back: "Permission: 'may / it's OK to'. <span class=\"ko\">들어가도 돼요?</span> (May I come in?)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)면 안 되다</span>", back: "Prohibition: 'must not'. <span class=\"ko\">늦으면 안 돼요.</span> (You mustn't be late.)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)ㄹ 수 있다 / 없다</span>", back: "Can / cannot (ability or possibility). <span class=\"ko\">한국어를 할 수 있어요.</span> (I can speak Korean.)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)ㄹ 줄 알다 / 모르다</span>", back: "Know / don't know how. <span class=\"ko\">운전할 줄 알아요.</span> (I know how to drive.)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)ㄴ/는 것 같다</span>", back: "Seems / I think. <span class=\"ko\">비가 오는 것 같아요.</span> (It seems to be raining.)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)ㄹ 것 같다</span>", back: "Will probably / I think I'll. <span class=\"ko\">늦을 것 같아요.</span> (I think I'll be late.)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)ㄹ게요</span>", back: "Speaker promise. <span class=\"ko\">제가 할게요.</span> (I'll do it [I promise].)" },
+    { section: "s14", front: "<span class=\"ko\">~(으)ㄹ래요?</span>", back: "Casual offer / invitation. <span class=\"ko\">같이 갈래요?</span> (Want to go together?)" },
+    { section: "s14", front: "<span class=\"ko\">~지요? / ~죠?</span>", back: "Seek agreement: 'right? / isn't it?'. <span class=\"ko\">맛있죠?</span> (It's delicious, right?)" },
+    { section: "s14", front: "<span class=\"ko\">~네요</span>", back: "Mild surprise / observation. <span class=\"ko\">비싸네요!</span> (Oh, it's expensive!)" },
+    { section: "s14", front: "<span class=\"ko\">~군요 / ~구나</span>", back: "Realization: 'ah, I see'. <span class=\"ko\">그렇군요.</span> (Ah, I see.)" },
+    { section: "s14", front: "<span class=\"ko\">~잖아요</span>", back: "'As you know' — reminding shared info. <span class=\"ko\">그건 비싸잖아요.</span> (That's expensive, you know.)" },
+    { section: "s14", front: "<span class=\"ko\">~거든요</span>", back: "'You see' — giving a reason. <span class=\"ko\">시간이 없거든요.</span> (You see, I don't have time.)" },
+    { section: "s14", front: "<span class=\"ko\">~고 있다</span>", back: "Progressive: 'in the act of'. <span class=\"ko\">먹고 있어요.</span> (I'm eating.)" },
+    { section: "s14", front: "<span class=\"ko\">~아/어 있다</span>", back: "Resultative: 'in the resulting state'. Only intransitives. <span class=\"ko\">앉아 있어요.</span> (I'm seated.)" },
+
+    { section: "s15", front: "Direct quote: <span class=\"ko\">~(이)라고 하다</span>", back: "Quote exact words. <span class=\"ko\">\"가요\"라고 했어요.</span> (Said 'I'm going'.)" },
+    { section: "s15", front: "Indirect statement", back: "Verb → <span class=\"ko\">~ㄴ다고 / ~는다고 했어요</span>. <span class=\"ko\">간다고 했어요.</span> (He said he goes.)" },
+    { section: "s15", front: "Indirect question", back: "<span class=\"ko\">~냐고 했어요 / 물었어요</span>. <span class=\"ko\">가냐고 물었어요.</span> (Asked whether he goes.)" },
+    { section: "s15", front: "Indirect command", back: "<span class=\"ko\">~(으)라고 했어요</span>. <span class=\"ko\">가라고 했어요.</span> (Told him to go.)" },
+    { section: "s15", front: "Quote contractions", back: "<span class=\"ko\">~다고 해요 → ~대요</span>; <span class=\"ko\">~(이)라고 해요 → ~(이)래요</span>; <span class=\"ko\">~냐고 해요 → ~냬요</span>." },
+
+    { section: "s16", front: "Two number systems", back: "Sino-Korean (<span class=\"ko\">일, 이, 삼…</span>) for dates, money, math. Native (<span class=\"ko\">하나, 둘, 셋…</span>) for people, age, things." },
+    { section: "s16", front: "Native numbers before counters", back: "<span class=\"ko\">하나 → 한, 둘 → 두, 셋 → 세, 넷 → 네, 스물 → 스무</span>. The bare form drops before a counter." },
+    { section: "s16", front: "Counter <span class=\"ko\">개</span>", back: "General things. <span class=\"ko\">사과 세 개</span> (three apples)." },
+    { section: "s16", front: "Counters: <span class=\"ko\">명 / 분</span>", back: "<span class=\"ko\">명</span> = people; <span class=\"ko\">분</span> = honorific people. <span class=\"ko\">손님 두 분</span> (two guests, polite)." },
+    { section: "s16", front: "More counters: <span class=\"ko\">권, 잔, 병, 장, 대</span>", back: "Books, cups, bottles, sheets/tickets, machines. <span class=\"ko\">커피 두 잔</span> (two coffees)." },
+    { section: "s16", front: "Age: <span class=\"ko\">살</span>", back: "Native number + <span class=\"ko\">살</span>. <span class=\"ko\">스무 살</span> (20 years old)." },
+    { section: "s16", front: "Time of day", back: "Native + <span class=\"ko\">시</span> for hours; Sino + <span class=\"ko\">분</span> for minutes. <span class=\"ko\">일곱 시 십오 분</span> (7:15)." },
+    { section: "s16", front: "Dates", back: "Sino-Korean throughout: <span class=\"ko\">2026년 4월 25일</span> (April 25, 2026)." },
+
+    { section: "s17", front: "First person: <span class=\"ko\">나 / 저</span>", back: "<span class=\"ko\">나</span> plain · <span class=\"ko\">저</span> humble. Default to <span class=\"ko\">저</span> with strangers and elders." },
+    { section: "s17", front: "First-person possessive: <span class=\"ko\">내 / 제</span>", back: "<span class=\"ko\">내</span> plain · <span class=\"ko\">제</span> humble. <span class=\"ko\">제 이름은…</span> (My name is…)" },
+    { section: "s17", front: "First-person plural: <span class=\"ko\">우리 / 저희</span>", back: "<span class=\"ko\">우리</span> plain · <span class=\"ko\">저희</span> humble. <span class=\"ko\">저희 회사</span> (our company [polite])." },
+    { section: "s17", front: "Avoid bare 'you'", back: "Use a name + <span class=\"ko\">씨</span>, or a title: <span class=\"ko\">선생님, 사장님, 오빠</span>. Direct 'you' often sounds rude." },
+
+    { section: "s18", front: "Who / what: <span class=\"ko\">누구 / 뭐</span>", back: "<span class=\"ko\">누구</span> = who. <span class=\"ko\">뭐</span> = what (casual; full form <span class=\"ko\">무엇</span>)." },
+    { section: "s18", front: "When / where: <span class=\"ko\">언제 / 어디</span>", back: "<span class=\"ko\">언제 만나요?</span> (When do we meet?) <span class=\"ko\">어디 가요?</span> (Where are you going?)" },
+    { section: "s18", front: "Why / how: <span class=\"ko\">왜 / 어떻게</span>", back: "<span class=\"ko\">왜 그래요?</span> (Why?) <span class=\"ko\">어떻게 해요?</span> (How do you do it?)" },
+    { section: "s18", front: "How much / how many: <span class=\"ko\">얼마 / 몇</span>", back: "<span class=\"ko\">얼마</span> = how much (price, amount). <span class=\"ko\">몇</span> + counter = how many." },
+    { section: "s18", front: "Which / what kind: <span class=\"ko\">어느 / 어떤</span>", back: "<span class=\"ko\">어느</span> = which (of a known set). <span class=\"ko\">어떤</span> = what kind of." },
+    { section: "s18", front: "Yes/no questions", back: "<span class=\"ko\">해요체</span>: same form, rising tone. Formal: <span class=\"ko\">~ㅂ니까/습니까?</span>" },
+
+    { section: "s19", front: "Lexical causative: <span class=\"ko\">~이/히/리/기</span>", back: "Built-in derived form. <span class=\"ko\">먹다 → 먹이다</span> (feed). Memorize per verb." },
+    { section: "s19", front: "Productive causative: <span class=\"ko\">~게 하다</span>", back: "Works for any verb without a built-in causative. <span class=\"ko\">아이를 자게 했어요.</span> (Made the child sleep.)" },
+    { section: "s19", front: "Lexical passive: <span class=\"ko\">~이/히/리</span>", back: "Built-in passive form. <span class=\"ko\">열다 → 열리다</span> (be opened); <span class=\"ko\">보다 → 보이다</span> (be visible)." },
+    { section: "s19", front: "Productive passive: <span class=\"ko\">~아/어지다</span>", back: "Adjectives → 'become X'; some verbs → passive. <span class=\"ko\">추워지다</span> (get cold), <span class=\"ko\">깨지다</span> (break)." },
+
+    { section: "s20", front: "<span class=\"ko\">ㅂ</span>-irregular: <span class=\"ko\">ㅂ → 우</span>", back: "Before a vowel ending. <span class=\"ko\">춥다 → 추워요</span> (it's cold)." },
+    { section: "s20", front: "<span class=\"ko\">ㄷ</span>-irregular: <span class=\"ko\">ㄷ → ㄹ</span>", back: "Before a vowel. <span class=\"ko\">듣다 → 들어요</span> (hear). Watch out: regular <span class=\"ko\">받다</span> doesn't change." },
+    { section: "s20", front: "<span class=\"ko\">ㅅ</span>-irregular: <span class=\"ko\">ㅅ</span> drops", back: "Before a vowel. <span class=\"ko\">짓다 → 지어요</span> (build)." },
+    { section: "s20", front: "<span class=\"ko\">ㄹ</span>-stem rule", back: "Drops before <span class=\"ko\">ㄴ, ㅂ, ㅅ, 시, 오</span> (mnemonic 'ㄴㅂㅅ시오'). <span class=\"ko\">살다 → 삽니다, 사세요</span>." },
+    { section: "s20", front: "<span class=\"ko\">으</span>-irregular: <span class=\"ko\">으</span> drops", back: "Before <span class=\"ko\">아/어</span>. <span class=\"ko\">예쁘다 → 예뻐요, 쓰다 → 써요</span>." },
+    { section: "s20", front: "<span class=\"ko\">르</span>-irregular: doubles <span class=\"ko\">ㄹ</span>", back: "<span class=\"ko\">르</span> → <span class=\"ko\">ㄹ</span> + <span class=\"ko\">라/러</span>. <span class=\"ko\">모르다 → 몰라요, 부르다 → 불러요</span>." },
+    { section: "s20", front: "<span class=\"ko\">ㅎ</span>-irregular (adj)", back: "<span class=\"ko\">ㅎ</span> drops, vowel changes. <span class=\"ko\">빨갛다 → 빨개요, 어떻다 → 어때요</span>." },
+    { section: "s20", front: "<span class=\"ko\">하다</span>: <span class=\"ko\">하 + 여 → 해</span>", back: "Special contraction. Whole-class shortcut: any <span class=\"ko\">~하다</span> verb → <span class=\"ko\">~해요</span>." },
+
+    { section: "s21", front: "Sentence recipe", back: "[Time] [Topic 은/는] [Subject 이/가] [Place 에/에서] [Indirect 에게] [Object 을/를] [Adverb] [Verb]. The verb is always last." },
+    { section: "s21", front: "Drop what's obvious", back: "Subjects, objects, even verbs disappear when context is clear. <span class=\"ko\">가세요.</span> (Go [you].)" },
+
+    { section: "s22", front: "Decision: which speech level?", back: "Audience first. Friend → <span class=\"ko\">반말</span>. Stranger / polite → <span class=\"ko\">해요</span>. Formal / business → <span class=\"ko\">합니다</span>." },
+    { section: "s22", front: "Decision: <span class=\"ko\">아</span> or <span class=\"ko\">어</span>?", back: "Stem's last vowel rule. <span class=\"ko\">ㅏ, ㅗ</span> → <span class=\"ko\">아요</span>. Anything else → <span class=\"ko\">어요</span>. <span class=\"ko\">하-</span> → <span class=\"ko\">해요</span>." },
+    { section: "s22", front: "Decision: insert <span class=\"ko\">으</span>?", back: "Consonant-final stem meets a consonant-starting ending → cushion <span class=\"ko\">으</span>. Vowel-final stem → drop it." },
+    { section: "s22", front: "Decision: which connector?", back: "Subjective reason → <span class=\"ko\">~(으)니까</span>. Same-subject sequential → <span class=\"ko\">~아/어서</span>. Background context → <span class=\"ko\">~는데</span>. Direct contrast → <span class=\"ko\">~지만</span>." },
+
+    { section: "s23", front: "Top endings to recognize", back: "<span class=\"ko\">~아/어요, ~았/었어요, ~(으)ㄹ 거예요, ~(으)세요, ~지 마세요, ~고, ~아/어서, ~(으)니까, ~지만, ~는데, ~(으)면</span>." },
+    { section: "s23", front: "Modal endings on sight", back: "<span class=\"ko\">~고 싶다, ~아/어 보다, ~아/어 주다, ~아/어야 되다, ~아/어도 되다, ~(으)면 안 되다, ~(으)ㄹ 수 있다, ~(으)ㄹ 줄 알다</span>." },
+    { section: "s23", front: "Sentence-final flavor", back: "<span class=\"ko\">~(으)ㄹ게요</span> promise · <span class=\"ko\">~(으)ㄹ래요?</span> offer · <span class=\"ko\">~지요?</span> right? · <span class=\"ko\">~네요</span> observation · <span class=\"ko\">~잖아요</span> as you know · <span class=\"ko\">~거든요</span> you see." },
+
+    { section: "s24", front: "Study tip: pair particles", back: "Learn each 받침/vowel pair together — <span class=\"ko\">은/는, 이/가, 을/를, (으)면, (으)니까</span>. Same rule, two surfaces." },
+    { section: "s24", front: "Study tip: the 'to be' trap", back: "Don't translate 'to be' word-for-word. Sometimes <span class=\"ko\">이다</span>, sometimes <span class=\"ko\">있다</span>, often nothing — adjectives conjugate themselves." },
+    { section: "s24", front: "Study tip: listen to endings", back: "Politeness, mood, evidentiality, certainty — they all live at the end of the sentence. Train your ear there first." },
+    { section: "s24", front: "Study tip: embrace <span class=\"ko\">~는데</span>", back: "It's the duct tape of Korean conversation: background context, soft contrast, set-up for a question, polite hedge. Worth heavy practice." }
+  ];
+
+  let deck = cards.map((_, i) => i);
+  let pos = 0;
+
+  const cardEl = document.getElementById('card');
+  const frontEl = document.getElementById('card-front');
+  const backEl = document.getElementById('card-back');
+  const sectionFrontEl = document.getElementById('card-section-front');
+  const sectionBackEl = document.getElementById('card-section-back');
+  const counterEl = document.getElementById('counter');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const shuffleBtn = document.getElementById('shuffle');
+  const filterEl = document.getElementById('filter');
+
+  function sectionLabel(section) {
+    const num = section.slice(1).padStart(2, '0');
+    const title = sectionTitles[section] || '';
+    return `§${num} · ${title}`;
+  }
+
+  function render() {
+    if (deck.length === 0) {
+      frontEl.textContent = 'No cards in this section.';
+      backEl.textContent = '';
+      sectionFrontEl.textContent = '—';
+      sectionBackEl.textContent = '—';
+      counterEl.textContent = '0 / 0';
+      cardEl.classList.remove('flipped');
+      cardEl.setAttribute('aria-pressed', 'false');
+      return;
+    }
+    const card = cards[deck[pos]];
+    frontEl.innerHTML = card.front;
+    backEl.innerHTML = card.back;
+    const label = sectionLabel(card.section);
+    sectionFrontEl.textContent = label;
+    sectionBackEl.textContent = label + ' · answer';
+    counterEl.textContent = `${pos + 1} / ${deck.length}`;
+    cardEl.classList.remove('flipped');
+    cardEl.setAttribute('aria-pressed', 'false');
+  }
+
+  function flip() {
+    if (deck.length === 0) return;
+    const flipped = cardEl.classList.toggle('flipped');
+    cardEl.setAttribute('aria-pressed', flipped ? 'true' : 'false');
+  }
+
+  function go(delta) {
+    if (deck.length === 0) return;
+    pos = (pos + delta + deck.length) % deck.length;
+    render();
+  }
+
+  function shuffle() {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    pos = 0;
+    render();
+  }
+
+  function applyFilter() {
+    const value = filterEl.value;
+    deck = cards
+      .map((c, i) => ({ c, i }))
+      .filter(({ c }) => value === 'all' || c.section === value)
+      .map(({ i }) => i);
+    pos = 0;
+    render();
+  }
+
+  cardEl.addEventListener('click', flip);
+  prevBtn.addEventListener('click', () => go(-1));
+  nextBtn.addEventListener('click', () => go(1));
+  shuffleBtn.addEventListener('click', shuffle);
+  filterEl.addEventListener('change', applyFilter);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('select, input, textarea')) return;
+    if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); flip(); return; }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1);  return; }
+  });
+
+  render();
+</script>
+
+</body>
+</html>
