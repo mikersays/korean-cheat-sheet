@@ -952,7 +952,6 @@
 
   // Print: force every <details> open so the page is a usable worksheet
   (function() {
-    if (!window.matchMedia) return;
     const setAll = (open) => {
       document.querySelectorAll('details.ex-answer').forEach(d => { d.open = open; });
     };
