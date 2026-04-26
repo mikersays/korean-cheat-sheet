@@ -275,6 +275,13 @@
     border-top: 1px solid var(--rule);
     padding-top: 24px;
   }
+  header.title .lede a {
+    color: var(--vermillion);
+    text-decoration: none;
+    border-bottom: 1px solid var(--vermillion-soft);
+    transition: border-color 160ms ease;
+  }
+  header.title .lede a:hover { border-bottom-color: var(--vermillion); }
 
   /* ----- Section heads with seal-stamp number ----- */
   section {
@@ -564,6 +571,13 @@
     flex-wrap: wrap;
     gap: 12px;
   }
+  footer a {
+    color: var(--vermillion);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 160ms ease;
+  }
+  footer a:hover { border-bottom-color: var(--vermillion); }
   footer .seal {
     width: 28px; height: 28px;
     background: var(--vermillion);
@@ -734,7 +748,7 @@
     <span class="display-row muted">Cheat Sheet,</span>
     <span class="display-row"><span class="ko-title">한국어 문법</span></span>
   </h1>
-  <p class="lede">A structural reference for building Korean sentences — particles, conjugation, connectors, and the patterns that hold them together.</p>
+  <p class="lede">A structural reference for building Korean sentences — particles, conjugation, connectors, and the patterns that hold them together. Can't read Hangul yet? Start with the <a href="https://mikersays.github.io/hangeul-reading-guide/">Hangul Reading Guide</a> first.</p>
 </header>
 
 <!-- 0 -->
@@ -1353,7 +1367,7 @@
 </section>
 
 <footer>
-  <span><span class="seal">韓</span> &nbsp; Korean Grammar Cheat Sheet · structural reference, no romanization</span>
+  <span><span class="seal">韓</span> &nbsp; Korean Grammar Cheat Sheet · prerequisite: <a href="https://mikersays.github.io/hangeul-reading-guide/">Hangul Reading Guide</a></span>
   <span>한국어 문법</span>
 </footer>
 
