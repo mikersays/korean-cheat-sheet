@@ -5,6 +5,7 @@ playwright-report/
 test-results/
 playwright/.cache/
 playwright-screenshots/
+audit/
 
 # OS
 .DS_Store
