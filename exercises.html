@@ -854,19 +854,55 @@
 <div class="layout">
 
 <aside aria-label="Table of contents">
-  <!-- TOC filled in Task 3 -->
+  <div class="toc-label">Practice</div>
+  <div class="toc-rule"></div>
+  <ol>
+    <li><a href="#s0">Foundations · <span class="ko">기초</span></a></li>
+    <li><a href="#s1">Word Order — SOV</a></li>
+    <li><a href="#s2">Particles <span class="ko">조사</span></a></li>
+    <li><a href="#s3">Copula <span class="ko">이다 / 아니다</span></a></li>
+    <li><a href="#s4">Verb / Adjective Stems</a></li>
+    <li><a href="#s5">Speech Levels</a></li>
+    <li><a href="#s6">Present Tense</a></li>
+    <li><a href="#s7">Past Tense</a></li>
+    <li><a href="#s8">Future / Probability</a></li>
+    <li><a href="#s9">Negation</a></li>
+    <li><a href="#s10">Honorifics</a></li>
+    <li><a href="#s11">Connectors</a></li>
+    <li><a href="#s12">Modifiers</a></li>
+    <li><a href="#s13">Nominalization</a></li>
+    <li><a href="#s14">Sentence-Final Patterns</a></li>
+    <li><a href="#s15">Quoting &amp; Reported Speech</a></li>
+    <li><a href="#s16">Numbers &amp; Counters</a></li>
+    <li><a href="#s18">Question Words</a></li>
+    <li><a href="#s19">Causative &amp; Passive</a></li>
+    <li><a href="#s20">Irregular Verb Stems</a></li>
+    <li><a href="#s21">Build a Sentence</a></li>
+    <li><a href="#s23">Identify Endings</a></li>
+  </ol>
 </aside>
 
 <main>
 
 <header class="title">
-  <!-- Hero filled in Task 3 -->
+  <div class="eyebrow-row">
+    <span class="dot"></span>
+    <span>Practice · 한국어 · 22 Sections</span>
+    <span class="rule"></span>
+  </div>
+  <h1>
+    <span class="display-row">Korean Grammar</span>
+    <span class="display-row muted">Practice,</span>
+    <span class="display-row"><span class="ko-title">연습</span></span>
+  </h1>
+  <p class="lede">A click-to-reveal drill set built on the <a href="grammar-cheatsheet.html">Korean Grammar Cheat Sheet</a>. Read a prompt, work it out, then tap <span class="ko">답</span> to check. Can't read Hangul yet? Start with the <a href="https://mikersays.github.io/hangeul-reading-guide/">Hangul Reading Guide</a>.</p>
 </header>
 
 <!-- Exercise sections inserted in Tasks 4–8 -->
 
 <footer>
-  <!-- Footer filled in Task 3 -->
+  <span><span class="seal">韓</span> &nbsp; Korean Grammar Practice · companion to the <a href="grammar-cheatsheet.html">Cheat Sheet</a> · prerequisite: <a href="https://mikersays.github.io/hangeul-reading-guide/">Hangul Reading Guide</a></span>
+  <span>한국어 연습</span>
 </footer>
 
 </main>
@@ -912,6 +948,24 @@
     }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
 
     map.forEach((_link, target) => io.observe(target));
+  })();
+
+  // Print: force every <details> open so the page is a usable worksheet
+  (function() {
+    if (!window.matchMedia) return;
+    const setAll = (open) => {
+      document.querySelectorAll('details.ex-answer').forEach(d => { d.open = open; });
+    };
+    let restoreState = null;
+    window.addEventListener('beforeprint', () => {
+      restoreState = Array.from(document.querySelectorAll('details.ex-answer')).map(d => d.open);
+      setAll(true);
+    });
+    window.addEventListener('afterprint', () => {
+      if (!restoreState) return;
+      document.querySelectorAll('details.ex-answer').forEach((d, i) => { d.open = !!restoreState[i]; });
+      restoreState = null;
+    });
   })();
 </script>
 
