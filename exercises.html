@@ -706,7 +706,143 @@
   }
 
 /* === BEGIN exercises-only additions (filled in Task 2) === */
-/* … */
+  /* Exercise card */
+  .ex {
+    background: var(--paper-soft);
+    border: 1px solid var(--rule-soft);
+    border-left: 3px solid var(--vermillion);
+    border-radius: 2px;
+    padding: 14px 18px 16px;
+    margin: 18px 0;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .ex-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ex-num {
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    font-size: 0.78em;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+
+  .ex-type {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 0.68em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--celadon);
+  }
+
+  .ex-prompt {
+    font-family: 'Newsreader', 'Iowan Old Style', Charter, Georgia, serif;
+    font-size: 1.0em;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+
+  .ex-prompt .en {
+    display: block;
+    font-style: italic;
+    color: var(--ink-faint);
+    font-size: 0.92em;
+    margin-top: 2px;
+  }
+
+  .ex-prompt ul.ex-choices {
+    margin: 8px 0 4px;
+    padding-left: 1.2em;
+    list-style: none;
+  }
+  .ex-prompt ul.ex-choices li {
+    padding: 1px 0;
+    font-family: 'Gowun Batang', 'Newsreader', serif;
+  }
+  .ex-prompt ul.ex-choices li::before {
+    content: "○ ";
+    color: var(--ink-faint);
+    margin-right: 4px;
+  }
+
+  details.ex-answer {
+    margin-top: 10px;
+  }
+  details.ex-answer summary {
+    display: inline-block;
+    cursor: pointer;
+    background: var(--vermillion);
+    color: var(--paper);
+    font-family: 'Gowun Batang', 'Newsreader', serif;
+    font-size: 0.86em;
+    padding: 3px 10px 4px;
+    border-radius: 2px;
+    box-shadow: var(--shadow-stamp);
+    user-select: none;
+    list-style: none;
+    transition: background-color 120ms ease;
+  }
+  details.ex-answer summary::-webkit-details-marker { display: none; }
+  details.ex-answer summary:hover { background: var(--vermillion-deep); }
+  details.ex-answer[open] summary {
+    background: var(--vermillion-deep);
+    opacity: 0.85;
+  }
+
+  .ex-solution {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--paper);
+    border-left: 2px solid var(--vermillion);
+    font-family: 'Newsreader', serif;
+    line-height: 1.6;
+  }
+  .ex-solution .ko { font-family: 'Gowun Batang', 'Newsreader', serif; }
+  .ex-solution .en {
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  /* Section lede points back at the cheat sheet */
+  .section-lede {
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 4px 0 18px;
+  }
+  .section-lede a {
+    color: var(--vermillion);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-lede a:hover { border-bottom-color: var(--vermillion); }
+
+  /* Mobile */
+  @media (max-width: 880px) {
+    .ex { padding: 12px 14px 14px; margin: 14px 0; }
+    .ex-head { gap: 10px; }
+    details.ex-answer summary { padding: 4px 12px 5px; }
+  }
+  @media (max-width: 480px) {
+    .ex { padding: 10px 12px 12px; }
+    .ex-prompt { font-size: 0.96em; }
+  }
+
+  /* Print: de-style the 답 tab; the JS in Task 3 force-opens all <details> on beforeprint */
+  @media print {
+    details.ex-answer summary,
+    details.ex-answer[open] summary {
+      background: transparent;
+      color: var(--ink);
+      box-shadow: none;
+      padding: 0;
+    }
+    details.ex-answer summary::after { content: " (answer):"; color: var(--ink-faint); }
+  }
 /* === END exercises-only additions === */
 </style>
 </head>
