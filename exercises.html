@@ -844,6 +844,13 @@
     }
     details.ex-answer summary::after { content: " (answer):"; color: var(--ink-faint); }
   }
+
+  /* TOC numbering: use explicit data-num because section numbers skip 17 and 22.
+     The lifted counter-based numbering would re-number 00–21 sequentially,
+     mismatching the in-body section headers. */
+  aside ol { counter-reset: none; }
+  aside li { counter-increment: none; }
+  aside a::before { content: attr(data-num); }
 /* === END exercises-only additions === */
 </style>
 </head>
@@ -857,28 +864,28 @@
   <div class="toc-label">Practice</div>
   <div class="toc-rule"></div>
   <ol>
-    <li><a href="#s0">Foundations · <span class="ko">기초</span></a></li>
-    <li><a href="#s1">Word Order — SOV</a></li>
-    <li><a href="#s2">Particles <span class="ko">조사</span></a></li>
-    <li><a href="#s3">Copula <span class="ko">이다 / 아니다</span></a></li>
-    <li><a href="#s4">Verb / Adjective Stems</a></li>
-    <li><a href="#s5">Speech Levels</a></li>
-    <li><a href="#s6">Present Tense</a></li>
-    <li><a href="#s7">Past Tense</a></li>
-    <li><a href="#s8">Future / Probability</a></li>
-    <li><a href="#s9">Negation</a></li>
-    <li><a href="#s10">Honorifics</a></li>
-    <li><a href="#s11">Connectors</a></li>
-    <li><a href="#s12">Modifiers</a></li>
-    <li><a href="#s13">Nominalization</a></li>
-    <li><a href="#s14">Sentence-Final Patterns</a></li>
-    <li><a href="#s15">Quoting &amp; Reported Speech</a></li>
-    <li><a href="#s16">Numbers &amp; Counters</a></li>
-    <li><a href="#s18">Question Words</a></li>
-    <li><a href="#s19">Causative &amp; Passive</a></li>
-    <li><a href="#s20">Irregular Verb Stems</a></li>
-    <li><a href="#s21">Build a Sentence</a></li>
-    <li><a href="#s23">Identify Endings</a></li>
+    <li><a href="#s0" data-num="00">Foundations · <span class="ko">기초</span></a></li>
+    <li><a href="#s1" data-num="01">Word Order — SOV</a></li>
+    <li><a href="#s2" data-num="02">Particles <span class="ko">조사</span></a></li>
+    <li><a href="#s3" data-num="03">Copula <span class="ko">이다 / 아니다</span></a></li>
+    <li><a href="#s4" data-num="04">Verb / Adjective Stems</a></li>
+    <li><a href="#s5" data-num="05">Speech Levels</a></li>
+    <li><a href="#s6" data-num="06">Present Tense</a></li>
+    <li><a href="#s7" data-num="07">Past Tense</a></li>
+    <li><a href="#s8" data-num="08">Future / Probability</a></li>
+    <li><a href="#s9" data-num="09">Negation</a></li>
+    <li><a href="#s10" data-num="10">Honorifics</a></li>
+    <li><a href="#s11" data-num="11">Connectors</a></li>
+    <li><a href="#s12" data-num="12">Modifiers</a></li>
+    <li><a href="#s13" data-num="13">Nominalization</a></li>
+    <li><a href="#s14" data-num="14">Sentence-Final Patterns</a></li>
+    <li><a href="#s15" data-num="15">Quoting &amp; Reported Speech</a></li>
+    <li><a href="#s16" data-num="16">Numbers &amp; Counters</a></li>
+    <li><a href="#s18" data-num="18">Question Words</a></li>
+    <li><a href="#s19" data-num="19">Causative &amp; Passive</a></li>
+    <li><a href="#s20" data-num="20">Irregular Verb Stems</a></li>
+    <li><a href="#s21" data-num="21">Build a Sentence</a></li>
+    <li><a href="#s23" data-num="23">Identify Endings</a></li>
   </ol>
 </aside>
 
