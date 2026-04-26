@@ -347,6 +347,19 @@
   p { margin: 0 0 14px; }
   p .ko, li .ko, td .ko, th .ko { font-weight: 500; color: var(--ink); }
 
+  /* English gloss under Korean examples in tables */
+  .en {
+    display: block;
+    margin-top: 3px;
+    color: var(--ink-faint);
+    font-style: italic;
+    font-family: 'Newsreader', serif;
+    font-size: 0.86em;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+
   strong { font-weight: 700; color: var(--ink); }
 
   /* ----- Inline code (used for short Korean / particle tokens) ----- */
@@ -643,7 +656,15 @@
     }
     table td, table th { white-space: normal; }
 
-    pre { max-width: 100%; overflow-x: auto; }
+    pre {
+      max-width: 100%;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      font-size: 14.5px;
+      padding: 14px 18px 14px 20px;
+    }
     .endings { grid-template-columns: 1fr; padding: 18px 20px; }
   }
 
@@ -651,6 +672,8 @@
     header.title h1 { letter-spacing: -0.025em; }
     header.title .lede { font-size: 16.5px; }
     body { font-size: 16.5px; }
+    pre { font-size: 13.5px; line-height: 1.7; }
+    .en { font-size: 0.92em; }
   }
 
   /* Selection */
@@ -793,7 +816,7 @@
     <li>Marks the grammatical subject; emphasizes "who/what" did it.</li>
     <li><span class="ko">받침</span> → <span class="ko">이</span>, no <span class="ko">받침</span> → <span class="ko">가</span> — avoids consonant crowding.</li>
   </ul>
-  <pre><code>누가 왔어요?   —   민수가 왔어요.</code></pre>
+  <pre><code>누가 왔어요?   —   민수가 왔어요.   (Who came? — Minsu came.)</code></pre>
 
   <div class="callout">
     <strong>은/는 vs 이/가:</strong> <span class="ko">은/는</span> = topic / contrast / general statement. <span class="ko">이/가</span> = new info / specific identification / answers "who?".
@@ -804,7 +827,8 @@
     <li>Marks the direct object.</li>
     <li><span class="ko">받침</span> → <span class="ko">을</span>, no <span class="ko">받침</span> → <span class="ko">를</span> — avoids consonant crowding.</li>
   </ul>
-  <pre><code>책을 읽어요.    물을 마셔요.    영화를 봐요.</code></pre>
+  <pre><code>책을 읽어요.    물을 마셔요.    영화를 봐요.
+(read a book.    drink water.    watch a movie.)</code></pre>
 
   <h3>Possessive / "of" — <span class="ko">의</span></h3>
   <pre><code>저의 책 → 제 책   (my book)
@@ -823,18 +847,18 @@
 
   <h3>To a person — <span class="ko">에게 / 한테 / 께</span></h3>
   <p><span class="ko">에게</span> (neutral, slightly formal), <span class="ko">한테</span> (colloquial), <span class="ko">께</span> (honorific). Both <span class="ko">에게</span> and <span class="ko">한테</span> are common in speech.</p>
-  <pre><code>친구에게 선물을 줬어요.
-선생님께 말씀드렸어요.</code></pre>
+  <pre><code>친구에게 선물을 줬어요.   (I gave a gift to a friend.)
+선생님께 말씀드렸어요.    (I spoke [humbly] to the teacher.)</code></pre>
 
   <h3>From a person — <span class="ko">에게서 / 한테서</span></h3>
-  <pre><code>엄마한테서 편지를 받았어요.</code></pre>
+  <pre><code>엄마한테서 편지를 받았어요.   (I got a letter from mom.)</code></pre>
 
   <h3>With / and — <span class="ko">와/과, 하고, (이)랑</span></h3>
   <ul>
     <li><span class="ko">와/과</span> (formal): <span class="ko">받침</span> → <span class="ko">과</span>, no <span class="ko">받침</span> → <span class="ko">와</span> — smoother sound.</li>
     <li><span class="ko">하고</span> (neutral), <span class="ko">(이)랑</span> (casual).</li>
   </ul>
-  <pre><code>빵과 우유   /   빵하고 우유   /   빵이랑 우유</code></pre>
+  <pre><code>빵과 우유   /   빵하고 우유   /   빵이랑 우유   (bread and milk)</code></pre>
 
   <h3>Also / too — <span class="ko">도</span></h3>
   <p>Replaces <span class="ko">은/는/이/가/을/를</span>. Never combine with them.</p>
@@ -844,8 +868,8 @@
   <pre><code>물만 마셔요.   (I drink only water.)</code></pre>
 
   <h3>From ~ to — <span class="ko">에서 ~ 까지</span> (place), <span class="ko">부터 ~ 까지</span> (time)</h3>
-  <pre><code>서울에서 부산까지
-9시부터 6시까지</code></pre>
+  <pre><code>서울에서 부산까지   (from Seoul to Busan)
+9시부터 6시까지     (from 9 to 6)</code></pre>
 
   <h3>By means of / with — <span class="ko">(으)로</span></h3>
   <p><span class="ko">받침</span> → <span class="ko">으로</span>, no <span class="ko">받침/ㄹ</span> → <span class="ko">로</span>. Tool, method, direction. <span class="ko">으</span> cushions consonant endings.</p>
@@ -865,14 +889,15 @@
 저는 학생이에요.          (I am a student.)
 저는 학생이 아니에요.     (I am not a student.)</code></pre>
   <p>존재 (existence): <strong><span class="ko">있다 / 없다</span></strong> = "there is / isn't", "have / don't have".</p>
-  <pre><code>시간이 있어요.   돈이 없어요.</code></pre>
+  <pre><code>시간이 있어요.   돈이 없어요.   (I have time.    I have no money.)</code></pre>
 </section>
 
 <!-- 4 -->
 <section id="s4">
   <h2><span class="num">04</span> Verb / Adjective Stems</h2>
   <p>Drop <span class="ko">다</span> from the dictionary form to get the stem.</p>
-  <pre><code>가다 → 가-     먹다 → 먹-     예쁘다 → 예쁘-</code></pre>
+  <pre><code>가다 → 가-     먹다 → 먹-     예쁘다 → 예쁘-
+(to go)        (to eat)       (to be pretty)</code></pre>
   <p>Korean <strong>adjectives are descriptive verbs</strong> — they conjugate just like verbs, no copula needed.</p>
   <pre><code>하늘이 파래요.   (The sky is blue.)   ← 파랗다 conjugated directly</code></pre>
 </section>
@@ -951,11 +976,11 @@
   <table>
     <thead><tr><th>Type</th><th>Pattern</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td>Short</td><td><span class="ko">안</span> + verb</td><td><span class="ko">안 먹어요</span></td></tr>
-      <tr><td>Long</td><td>verb stem + <span class="ko">지 않다</span></td><td><span class="ko">먹지 않아요</span></td></tr>
-      <tr><td>Inability (short)</td><td><span class="ko">못</span> + verb</td><td><span class="ko">못 가요</span></td></tr>
-      <tr><td>Inability (long)</td><td>stem + <span class="ko">지 못하다</span></td><td><span class="ko">가지 못해요</span></td></tr>
-      <tr><td>Don't (imperative)</td><td>stem + <span class="ko">지 마세요</span></td><td><span class="ko">가지 마세요</span></td></tr>
+      <tr><td>Short</td><td><span class="ko">안</span> + verb</td><td><span class="ko">안 먹어요</span><span class="en">doesn't eat</span></td></tr>
+      <tr><td>Long</td><td>verb stem + <span class="ko">지 않다</span></td><td><span class="ko">먹지 않아요</span><span class="en">doesn't eat</span></td></tr>
+      <tr><td>Inability (short)</td><td><span class="ko">못</span> + verb</td><td><span class="ko">못 가요</span><span class="en">can't go</span></td></tr>
+      <tr><td>Inability (long)</td><td>stem + <span class="ko">지 못하다</span></td><td><span class="ko">가지 못해요</span><span class="en">can't go</span></td></tr>
+      <tr><td>Don't (imperative)</td><td>stem + <span class="ko">지 마세요</span></td><td><span class="ko">가지 마세요</span><span class="en">don't go</span></td></tr>
     </tbody>
   </table>
   <div class="callout"><strong>Note:</strong> <span class="ko">하다</span> verbs split — <strong><span class="ko">공부 안 해요</span></strong> (not <span class="ko">안 공부해요</span>).</div>
@@ -965,9 +990,9 @@
 <section id="s10">
   <h2><span class="num">10</span> Honorifics — <span class="ko">~(으)시~</span></h2>
   <p>Insert <strong><span class="ko">시</span></strong> into the verb stem to honor the <strong>subject</strong>.</p>
-  <pre><code>가다 → 가시다 → 가세요 / 가십니다
-먹다 → 드시다 (special)
-자다 → 주무시다 (special)
+  <pre><code>가다 → 가시다 → 가세요 / 가십니다   (go → goes [hon.])
+먹다 → 드시다 (special)               (eat → eats [hon.])
+자다 → 주무시다 (special)             (sleep → sleeps [hon.])
 있다 → 계시다 (special, "to be present")</code></pre>
   <p>Honorific particles: <span class="ko">께서</span> (subject), <span class="ko">께</span> (to). Honorific noun forms: <span class="ko">진지 (밥), 댁 (집), 연세 (나이), 성함 (이름), 말씀 (말)</span>.</p>
   <p>Humble forms (lower yourself): <span class="ko">드리다 (주다), 뵙다 (보다), 여쭙다 (묻다)</span>.</p>
@@ -979,18 +1004,18 @@
   <table>
     <thead><tr><th>Meaning</th><th>Pattern</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td>and (then)</td><td><span class="ko">~고</span></td><td><span class="ko">먹고 자요.</span></td></tr>
-      <tr><td>and (sequence, same subject)</td><td><span class="ko">~아/어서</span></td><td><span class="ko">학교에 가서 공부해요.</span></td></tr>
-      <tr><td>because (reason)</td><td><span class="ko">~아/어서</span></td><td><span class="ko">추워서 안 가요.</span></td></tr>
-      <tr><td>because (subjective, opinion/excuse)</td><td><span class="ko">~(으)니까</span></td><td><span class="ko">비가 오니까 우산 가져가요.</span></td></tr>
-      <tr><td>but</td><td><span class="ko">~지만</span></td><td><span class="ko">좋지만 비싸요.</span></td></tr>
-      <tr><td>but / however</td><td><span class="ko">~는데 / ~(으)ㄴ데</span></td><td><span class="ko">먹었는데 배고파요.</span></td></tr>
-      <tr><td>if</td><td><span class="ko">~(으)면</span></td><td><span class="ko">시간 있으면 만나요.</span></td></tr>
-      <tr><td>while / as</td><td><span class="ko">~(으)면서</span></td><td><span class="ko">음악 들으면서 공부해요.</span></td></tr>
-      <tr><td>in order to</td><td><span class="ko">~(으)러</span> (with go/come)</td><td><span class="ko">밥 먹으러 가요.</span></td></tr>
-      <tr><td>so that / for</td><td><span class="ko">~기 위해서</span></td><td><span class="ko">건강을 위해서 운동해요.</span></td></tr>
-      <tr><td>even though</td><td><span class="ko">~아/어도</span></td><td><span class="ko">비싸도 살 거예요.</span></td></tr>
-      <tr><td>or</td><td><span class="ko">~거나 / 아니면</span></td><td><span class="ko">영화 보거나 책 읽어요.</span></td></tr>
+      <tr><td>and (then)</td><td><span class="ko">~고</span></td><td><span class="ko">먹고 자요.</span><span class="en">Eat, then sleep.</span></td></tr>
+      <tr><td>and (sequence, same subject)</td><td><span class="ko">~아/어서</span></td><td><span class="ko">학교에 가서 공부해요.</span><span class="en">I go to school and study (there).</span></td></tr>
+      <tr><td>because (reason)</td><td><span class="ko">~아/어서</span></td><td><span class="ko">추워서 안 가요.</span><span class="en">It's cold, so I'm not going.</span></td></tr>
+      <tr><td>because (subjective, opinion/excuse)</td><td><span class="ko">~(으)니까</span></td><td><span class="ko">비가 오니까 우산 가져가요.</span><span class="en">Since it's raining, take an umbrella.</span></td></tr>
+      <tr><td>but</td><td><span class="ko">~지만</span></td><td><span class="ko">좋지만 비싸요.</span><span class="en">It's good, but expensive.</span></td></tr>
+      <tr><td>but / however</td><td><span class="ko">~는데 / ~(으)ㄴ데</span></td><td><span class="ko">먹었는데 배고파요.</span><span class="en">I ate, but I'm hungry.</span></td></tr>
+      <tr><td>if</td><td><span class="ko">~(으)면</span></td><td><span class="ko">시간 있으면 만나요.</span><span class="en">If you have time, let's meet.</span></td></tr>
+      <tr><td>while / as</td><td><span class="ko">~(으)면서</span></td><td><span class="ko">음악 들으면서 공부해요.</span><span class="en">I study while listening to music.</span></td></tr>
+      <tr><td>in order to</td><td><span class="ko">~(으)러</span> (with go/come)</td><td><span class="ko">밥 먹으러 가요.</span><span class="en">I'm going (out) to eat.</span></td></tr>
+      <tr><td>so that / for</td><td><span class="ko">~기 위해서</span></td><td><span class="ko">건강을 위해서 운동해요.</span><span class="en">I exercise for my health.</span></td></tr>
+      <tr><td>even though</td><td><span class="ko">~아/어도</span></td><td><span class="ko">비싸도 살 거예요.</span><span class="en">Even if it's expensive, I'll buy it.</span></td></tr>
+      <tr><td>or</td><td><span class="ko">~거나 / 아니면</span></td><td><span class="ko">영화 보거나 책 읽어요.</span><span class="en">I watch movies or read books.</span></td></tr>
     </tbody>
   </table>
   <div class="callout">
@@ -1031,8 +1056,8 @@
       <tr><td><span class="ko">~는 것</span></td><td>"the thing of ~ing"; common in spoken explanations</td></tr>
     </tbody>
   </table>
-  <pre><code>한국어 공부하기가 어려워요.
-영화 보는 것을 좋아해요.</code></pre>
+  <pre><code>한국어 공부하기가 어려워요.   (Studying Korean is hard.)
+영화 보는 것을 좋아해요.       (I like watching movies.)</code></pre>
 </section>
 
 <!-- 14 -->
@@ -1043,9 +1068,9 @@
   <table>
     <thead><tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><span class="ko">~고 싶다</span></td><td>want to</td><td><span class="ko">집에 가고 싶어요.</span></td></tr>
-      <tr><td><span class="ko">~아/어 보다</span></td><td>try -ing</td><td><span class="ko">한번 먹어 봐요.</span></td></tr>
-      <tr><td><span class="ko">~아/어 주다</span></td><td>do for someone</td><td><span class="ko">도와 주세요.</span></td></tr>
+      <tr><td><span class="ko">~고 싶다</span></td><td>want to</td><td><span class="ko">집에 가고 싶어요.</span><span class="en">I want to go home.</span></td></tr>
+      <tr><td><span class="ko">~아/어 보다</span></td><td>try -ing</td><td><span class="ko">한번 먹어 봐요.</span><span class="en">Try eating it once.</span></td></tr>
+      <tr><td><span class="ko">~아/어 주다</span></td><td>do for someone</td><td><span class="ko">도와 주세요.</span><span class="en">Please help me.</span></td></tr>
     </tbody>
   </table>
 
@@ -1053,9 +1078,9 @@
   <table>
     <thead><tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><span class="ko">~아/어야 하다 / 되다</span></td><td>have to / must</td><td><span class="ko">일찍 가야 해요.</span></td></tr>
-      <tr><td><span class="ko">~아/어도 되다</span></td><td>may, it's OK to</td><td><span class="ko">들어가도 돼요?</span></td></tr>
-      <tr><td><span class="ko">~(으)면 안 되다</span></td><td>must not</td><td><span class="ko">늦으면 안 돼요.</span></td></tr>
+      <tr><td><span class="ko">~아/어야 하다 / 되다</span></td><td>have to / must</td><td><span class="ko">일찍 가야 해요.</span><span class="en">I have to go early.</span></td></tr>
+      <tr><td><span class="ko">~아/어도 되다</span></td><td>may, it's OK to</td><td><span class="ko">들어가도 돼요?</span><span class="en">May I come in?</span></td></tr>
+      <tr><td><span class="ko">~(으)면 안 되다</span></td><td>must not</td><td><span class="ko">늦으면 안 돼요.</span><span class="en">You mustn't be late.</span></td></tr>
     </tbody>
   </table>
 
@@ -1063,8 +1088,8 @@
   <table>
     <thead><tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><span class="ko">~(으)ㄹ 수 있다 / 없다</span></td><td>can / cannot</td><td><span class="ko">한국어를 할 수 있어요.</span></td></tr>
-      <tr><td><span class="ko">~(으)ㄹ 줄 알다 / 모르다</span></td><td>know / don't know how to</td><td><span class="ko">운전할 줄 알아요.</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄹ 수 있다 / 없다</span></td><td>can / cannot</td><td><span class="ko">한국어를 할 수 있어요.</span><span class="en">I can speak Korean.</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄹ 줄 알다 / 모르다</span></td><td>know / don't know how to</td><td><span class="ko">운전할 줄 알아요.</span><span class="en">I know how to drive.</span></td></tr>
     </tbody>
   </table>
 
@@ -1072,10 +1097,10 @@
   <table>
     <thead><tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><span class="ko">~(으)ㄴ/는 것 같다</span></td><td>seems / I think (now or past)</td><td><span class="ko">비가 오는 것 같아요.</span></td></tr>
-      <tr><td><span class="ko">~(으)ㄹ 것 같다</span></td><td>will probably / seems will</td><td><span class="ko">늦을 것 같아요.</span></td></tr>
-      <tr><td><span class="ko">~(으)ㄹ게요</span></td><td>I'll (promise / commitment to listener)</td><td><span class="ko">제가 할게요.</span></td></tr>
-      <tr><td><span class="ko">~(으)ㄹ래요?</span></td><td>will you / want to?</td><td><span class="ko">같이 갈래요?</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄴ/는 것 같다</span></td><td>seems / I think (now or past)</td><td><span class="ko">비가 오는 것 같아요.</span><span class="en">It seems to be raining.</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄹ 것 같다</span></td><td>will probably / seems will</td><td><span class="ko">늦을 것 같아요.</span><span class="en">I think I'll be late.</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄹ게요</span></td><td>I'll (promise / commitment to listener)</td><td><span class="ko">제가 할게요.</span><span class="en">I'll do it.</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄹ래요?</span></td><td>will you / want to?</td><td><span class="ko">같이 갈래요?</span><span class="en">Want to go together?</span></td></tr>
     </tbody>
   </table>
 
@@ -1083,12 +1108,12 @@
   <table>
     <thead><tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr></thead>
     <tbody>
-      <tr><td><span class="ko">~지요? (~죠?)</span></td><td>right?, isn't it? (seeking agreement)</td><td><span class="ko">맛있죠?</span></td></tr>
-      <tr><td><span class="ko">~네요</span></td><td>mild surprise / observation</td><td><span class="ko">비싸네요!</span></td></tr>
-      <tr><td><span class="ko">~군요 / ~구나</span></td><td>realization ("ah, I see")</td><td><span class="ko">그렇군요.</span></td></tr>
-      <tr><td><span class="ko">~잖아요</span></td><td>as you know / you see</td><td><span class="ko">그건 비싸잖아요.</span></td></tr>
-      <tr><td><span class="ko">~거든요</span></td><td>you see (giving reason)</td><td><span class="ko">시간이 없거든요.</span></td></tr>
-      <tr><td><span class="ko">~(으)ㄴ/는데요</span></td><td>softening / leading remark</td><td><span class="ko">잘 모르겠는데요…</span></td></tr>
+      <tr><td><span class="ko">~지요? (~죠?)</span></td><td>right?, isn't it? (seeking agreement)</td><td><span class="ko">맛있죠?</span><span class="en">It's delicious, right?</span></td></tr>
+      <tr><td><span class="ko">~네요</span></td><td>mild surprise / observation</td><td><span class="ko">비싸네요!</span><span class="en">Wow, it's expensive!</span></td></tr>
+      <tr><td><span class="ko">~군요 / ~구나</span></td><td>realization ("ah, I see")</td><td><span class="ko">그렇군요.</span><span class="en">Ah, I see.</span></td></tr>
+      <tr><td><span class="ko">~잖아요</span></td><td>as you know / you see</td><td><span class="ko">그건 비싸잖아요.</span><span class="en">That's expensive, you know.</span></td></tr>
+      <tr><td><span class="ko">~거든요</span></td><td>you see (giving reason)</td><td><span class="ko">시간이 없거든요.</span><span class="en">You see, I don't have time.</span></td></tr>
+      <tr><td><span class="ko">~(으)ㄴ/는데요</span></td><td>softening / leading remark</td><td><span class="ko">잘 모르겠는데요…</span><span class="en">I'm not really sure, but…</span></td></tr>
     </tbody>
   </table>
 
@@ -1159,7 +1184,8 @@
       <tr><td><span class="ko">번</span></td><td>times (frequency / number)</td></tr>
     </tbody>
   </table>
-  <pre><code>사과 세 개       커피 두 잔       스무 살       3시 30분</code></pre>
+  <pre><code>사과 세 개       커피 두 잔       스무 살       3시 30분
+(three apples)   (two coffees)    (20 years old) (3:30)</code></pre>
 
   <h3>Time</h3>
   <p>Hours = native + <span class="ko">시</span>. Minutes = sino + <span class="ko">분</span>.</p>
@@ -1251,7 +1277,8 @@
 <section id="s21">
   <h2><span class="num">21</span> Building a Sentence — the recipe</h2>
   <pre><code>[Time]  [Topic은/는]  [Subject이/가]  [Place에/에서]  [Indirect obj에게]  [Object을/를]  [Adverb]  [Verb]
-어제    저는                          학교에서                              친구를      오래       기다렸어요.</code></pre>
+어제    저는                          학교에서                              친구를      오래       기다렸어요.
+(Yesterday, [as for me], at school, [I] waited a long time for a friend.)</code></pre>
   <ul>
     <li>Time often goes first; topic before subject; verb always last.</li>
     <li>Drop anything obvious from context.</li>
