@@ -60,7 +60,9 @@ Sister repo also has: `.jamo-grid` / `.jamo-cell`, `.walk` / `.step`, `.diagram`
 - `.card-frame` / `.card` / `.face` — 3D flip container. `.card.flipped` toggles `transform: rotateY(180deg)`; both faces use `backface-visibility: hidden`. Front and back are positioned absolutely inside the frame.
 - `.card-section`, `.card-content`, `.card-flip-hint` — small celadon section label, centered card body, small uppercase keyboard hint
 - `.card-nav` — prev/next pair below the card; deck wraps at both ends
-- Card data lives in a JS `cards` array of `{ section, front, back }`. `front` and `back` are HTML strings that may contain `<span class="ko">…</span>` for Korean.
+- Card data lives in two arrays: `grammarCards` of `{ section, type, front, back }` and `vocabCards` of `{ pos, subcat, front, back }`. `front` and `back` are HTML strings that may contain `<span class="ko">…</span>` for Korean and `<span class="ex">…</span>` for sample sentences.
+- Two filter dropdowns in vocab mode: primary by POS, secondary by subcat (only visible when a specific POS is selected). Allowed subcats per POS are defined in `posSubcats` in flashcards.html — update both `posSubcats` and `subcatTitles` when adding a new subcat.
+- Mark-known persistence uses `localStorage` key `kcs.flashcards.known.v1`, keyed by a stable hash of the card's `front`. See the `add-flashcards` skill for the full schema.
 
 ## Section IDs
 

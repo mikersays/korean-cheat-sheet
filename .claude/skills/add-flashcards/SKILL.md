@@ -129,12 +129,24 @@ rm -f /tmp/_fc_chunk_*.js /tmp/_vocab_chunk_*.js /tmp/_merged_*.js /tmp/_check.j
 ### Vocab card
 
 ```js
-{ pos: "<pos>", front: "<task>", back: "<answer>" }
+{ pos: "<pos>", subcat: "<subcat>", front: "<task>", back: "<answer>" }
 ```
 
 - `pos`: one of `noun`, `verb`, `adjective`, `adverb`, `pronoun`, `interjection`
+- `subcat`: a topical filter key. Must come from the list for that POS (see below). Used by the second filter dropdown in vocab mode so users can drill into "Noun → Food" or "Verb → Mental" etc.
 - `front`: typically `"Translate to English: <span class=\"ko\">…</span>"` or `"Translate to Korean: \"…\""`. Some cards use `"Distinguish: …"`, `"Conjugate: …"`, or `"Choose: …"`.
 - `back`: translation + sample sentence wrapped in `<span class="ex">…</span>`. For verbs/adjectives, include the polite-present form and any irregular flag (e.g., "ㅂ-irregular") in the back.
+
+**Subcat taxonomy** (must match `posSubcats` in flashcards.html — extending requires updating both):
+
+- `pos: "noun"` → `people` · `places` · `time` · `food` · `body` · `home` · `transport` · `work` · `money` · `school` · `tech` · `abstract`
+- `pos: "verb"` → `daily` · `communication` · `mental` · `action` · `digital`
+- `pos: "adjective"` → `physical` · `quality` · `emotion` · `taste` · `relation`
+- `pos: "adverb"` → `time` · `manner` · `degree` · `transition`
+- `pos: "pronoun"` → `personal` · `demonstrative`
+- `pos: "interjection"` → `greeting` · `reaction` · `phrase`
+
+When in doubt, lean toward where a learner would *look* for the word. `time` is shared across nouns and adverbs (e.g., 시간 the noun vs. 자주 the adverb) — that's intentional.
 
 ## Front-text convention
 
@@ -163,6 +175,7 @@ The Korean inside `.ex` will be browser-synth-slanted (Gowun Batang has no real 
 - Two agents writing to the same chunk path — content gets overwritten
 - Romanizing Korean anywhere
 - Adding a new POS or grammar section without updating `posTitles` / `sectionTitles` and the rendering JS in flashcards.html
+- Adding a new subcat without updating `subcatTitles` and `posSubcats` in flashcards.html — cards with an unknown subcat will fail to filter
 - Adding cards directly to flashcards.html when scope is large — use the chunk + merge flow so changes are reviewable
 - Forgetting the `.ex` wrapper on new example sentences
 
