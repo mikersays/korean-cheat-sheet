@@ -15,6 +15,7 @@ Static GitHub Pages site teaching Korean grammar. Has a sister repo that teaches
   - `index.html` — meta-refresh redirect to the cheat sheet.
   - `grammar-cheatsheet.md` — earlier markdown source, kept for reference.
   - `docs/superpowers/{plans,specs}/` — dated design notes (e.g. `2026-04-26-grammar-practice-page-*.md`). Reference only; not deployed.
+  - `.claude/skills/` — project-level Claude Code skills (committed; the rest of `.claude/` is gitignored). Two skills: `add-subpage` (new HTML companion page following the site aesthetic) and `add-flashcards` (parallel-subagent flow to bulk-add cards to flashcards.html, with `scripts/validate_chunk.py` and `scripts/merge_chunks.py` helpers).
 - **Sister repo** — `mikersays/hangeul-reading-guide` → https://mikersays.github.io/hangeul-reading-guide/
   - Local path: `../hangeul-reading-guide/`
   - Same single-HTML-file layout, same CSS lifted from this repo
