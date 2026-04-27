@@ -153,9 +153,11 @@ When in doubt, lean toward where a learner would *look* for the word. `time` is 
 Every front MUST start with one of these directive verbs:
 - `Recall: …` — remember a rule
 - `Translate to English: …` / `Translate to Korean: "…"` — produce in the other language
-- `Conjugate: …` — apply an ending
+- `Conjugate: …` (or `Apply: …`) — apply an ending
 - `Identify: …` — name a feature in the given Korean
 - `Choose: …` — pick the correct option from alternatives
+- `Distinguish: …` — clarify two confusable forms (vocab decks)
+- `Arrange: …` — order scrambled chunks into a correct sentence
 
 This is what makes cards self-explanatory. Without the directive, the front is just a label.
 

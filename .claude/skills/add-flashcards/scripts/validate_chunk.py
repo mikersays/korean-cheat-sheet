@@ -18,7 +18,7 @@ from collections import Counter
 
 ALLOWED_TYPES = {"recall", "translate", "conjugate", "identify", "choose"}
 ALLOWED_POS = {"noun", "verb", "adjective", "adverb", "pronoun", "interjection"}
-DIRECTIVES = ("Recall", "Translate", "Conjugate", "Identify", "Choose", "Apply", "Distinguish")
+DIRECTIVES = ("Recall", "Translate", "Conjugate", "Identify", "Choose", "Apply", "Distinguish", "Arrange")
 
 
 def fail(msg):
