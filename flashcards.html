@@ -484,6 +484,60 @@
     outline: none;
   }
 
+  /* Mark-known button — celadon palette so it's distinct from prev/next */
+  .card-nav .mark-btn {
+    border-color: var(--rule);
+    color: var(--ink-soft);
+  }
+  .card-nav .mark-btn:hover,
+  .card-nav .mark-btn:focus {
+    border-color: var(--celadon);
+    color: var(--celadon);
+  }
+  .card-nav .mark-btn.known {
+    background: var(--celadon);
+    color: var(--paper);
+    border-color: var(--celadon);
+  }
+  .card-nav .mark-btn.known:hover,
+  .card-nav .mark-btn.known:focus {
+    background: transparent;
+    color: var(--celadon);
+  }
+
+  /* Known-cards control strip — only visible when at least one card is marked */
+  .known-controls {
+    display: none;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: -14px 0 28px;
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+  .known-controls.has-known { display: flex; }
+  .known-controls .link-btn {
+    background: transparent;
+    border: 0;
+    color: var(--vermillion);
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+    border-bottom: 1px solid transparent;
+    transition: border-color 160ms ease;
+  }
+  .known-controls .link-btn:hover,
+  .known-controls .link-btn:focus {
+    border-bottom-color: var(--vermillion);
+    outline: none;
+  }
+  .known-controls .info {
+    flex: 1;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
   /* ==================== CALLOUT ==================== */
 
   .callout {
@@ -667,11 +721,18 @@
 
 <nav class="card-nav" aria-label="Card navigation">
   <button id="prev" type="button">← Prev</button>
+  <button id="mark" type="button" class="mark-btn" aria-pressed="false">Mark known</button>
   <button id="next" type="button">Next →</button>
 </nav>
 
+<div class="known-controls" id="known-controls" aria-label="Known-cards controls">
+  <button id="toggle-known" type="button" class="link-btn">Show known cards</button>
+  <button id="reset-known" type="button" class="link-btn">reset all marks</button>
+  <span class="info" id="known-info"></span>
+</div>
+
 <div class="callout">
-  <strong>Keyboard.</strong> <kbd>Space</kbd> to flip · <kbd>←</kbd> / <kbd>→</kbd> to move through the deck. The deck wraps at both ends, so the last card's <em>Next</em> takes you back to the first.
+  <strong>Keyboard.</strong> <kbd>Space</kbd> to flip · <kbd>←</kbd> / <kbd>→</kbd> to navigate · <kbd>K</kbd> to mark the current card known (or unmark it). Known cards are stored in your browser and hidden from the deck on next load.
 </div>
 
 <footer>
@@ -1605,7 +1666,38 @@
   let mode = 'grammar';
   let deck = [];
   let pos = 0;
+  let showKnown = false;
 
+  // ---- Mark-known persistence ---------------------------------------------
+  const STORAGE_KEY = 'kcs.flashcards.known.v1';
+
+  function hashFront(s) {
+    // DJB2 — short, stable, no deps
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+  }
+  function cardKey(card) { return hashFront(card.front); }
+
+  function loadKnown() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return new Set();
+      const obj = JSON.parse(raw);
+      return new Set(Object.keys(obj).filter(k => obj[k]));
+    } catch (e) { return new Set(); }
+  }
+  function saveKnown() {
+    try {
+      const obj = {};
+      known.forEach(k => obj[k] = true);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    } catch (e) { /* private mode or quota — degrade to in-memory */ }
+  }
+  const known = loadKnown();
+  function isKnown(card) { return known.has(cardKey(card)); }
+
+  // ---- DOM refs ------------------------------------------------------------
   const cardEl = document.getElementById('card');
   const frontEl = document.getElementById('card-front');
   const backEl = document.getElementById('card-back');
@@ -1615,9 +1707,14 @@
   const counterEl = document.getElementById('counter');
   const prevBtn = document.getElementById('prev');
   const nextBtn = document.getElementById('next');
+  const markBtn = document.getElementById('mark');
   const shuffleBtn = document.getElementById('shuffle');
   const filterEl = document.getElementById('filter');
   const tabBtns = document.querySelectorAll('.mode-tabs .tab');
+  const knownCtrlsEl = document.getElementById('known-controls');
+  const toggleKnownBtn = document.getElementById('toggle-known');
+  const resetKnownBtn = document.getElementById('reset-known');
+  const knownInfoEl = document.getElementById('known-info');
 
   function activeCards() {
     return mode === 'grammar' ? grammarCards : vocabCards;
@@ -1662,16 +1759,51 @@
     }
   }
 
+  // Count cards in current category filter that are excluded by the known filter
+  function hiddenInFilter() {
+    if (showKnown) return 0;
+    const value = filterEl.value;
+    const all = activeCards();
+    const key = categoryKey();
+    let n = 0;
+    for (const c of all) {
+      if (value !== 'all' && c[key] !== value) continue;
+      if (isKnown(c)) n++;
+    }
+    return n;
+  }
+
+  function updateKnownControls() {
+    const all = activeCards();
+    let totalKnown = 0;
+    for (const c of all) if (isKnown(c)) totalKnown++;
+    knownCtrlsEl.classList.toggle('has-known', totalKnown > 0);
+    knownInfoEl.textContent = totalKnown > 0 ? `${totalKnown} marked known in this deck` : '';
+    toggleKnownBtn.textContent = showKnown ? 'Hide known cards' : 'Show known cards';
+  }
+
   function render() {
     if (deck.length === 0) {
-      frontEl.innerHTML = '<p>No cards in this filter.</p>';
+      const total = activeCards().length;
+      const hidden = total - 0; // approximate; we'll show a useful empty state
+      const knownInDeck = activeCards().filter(isKnown).length;
+      if (!showKnown && knownInDeck > 0) {
+        frontEl.innerHTML = '<p>All cards in this filter are marked known. Toggle <em>Show known cards</em> below to review them.</p>';
+      } else {
+        frontEl.innerHTML = '<p>No cards in this filter.</p>';
+      }
       backEl.innerHTML = '';
       sectionFrontEl.textContent = '—';
       sectionBackEl.textContent = '—';
       typeFrontEl.textContent = '';
+      markBtn.textContent = 'Mark known';
+      markBtn.classList.remove('known');
+      markBtn.setAttribute('aria-pressed', 'false');
+      markBtn.disabled = true;
       counterEl.textContent = '0 / 0';
       cardEl.classList.remove('flipped');
       cardEl.setAttribute('aria-pressed', 'false');
+      updateKnownControls();
       return;
     }
     const all = activeCards();
@@ -1682,9 +1814,21 @@
     sectionFrontEl.textContent = label;
     sectionBackEl.textContent = label + ' · answer';
     typeFrontEl.textContent = card.type ? card.type.toUpperCase() : '';
-    counterEl.textContent = `${pos + 1} / ${deck.length}`;
+
+    const cardKnown = isKnown(card);
+    markBtn.disabled = false;
+    markBtn.textContent = cardKnown ? '✓ Known' : 'Mark known';
+    markBtn.classList.toggle('known', cardKnown);
+    markBtn.setAttribute('aria-pressed', cardKnown ? 'true' : 'false');
+
+    const hidden = hiddenInFilter();
+    counterEl.textContent = hidden > 0
+      ? `${pos + 1} / ${deck.length} (${hidden} hidden)`
+      : `${pos + 1} / ${deck.length}`;
+
     cardEl.classList.remove('flipped');
     cardEl.setAttribute('aria-pressed', 'false');
+    updateKnownControls();
   }
 
   function flip() {
@@ -1714,7 +1858,11 @@
     const key = categoryKey();
     deck = all
       .map((c, i) => ({ c, i }))
-      .filter(({ c }) => value === 'all' || c[key] === value)
+      .filter(({ c }) => {
+        if (value !== 'all' && c[key] !== value) return false;
+        if (!showKnown && isKnown(c)) return false;
+        return true;
+      })
       .map(({ i }) => i);
     pos = 0;
     render();
@@ -1723,6 +1871,7 @@
   function setMode(newMode) {
     if (mode === newMode) return;
     mode = newMode;
+    showKnown = false;  // each deck starts with known hidden
     tabBtns.forEach(b => {
       const isActive = b.dataset.mode === mode;
       b.classList.toggle('active', isActive);
@@ -1733,18 +1882,55 @@
     applyFilter();
   }
 
+  function toggleMarkCurrent() {
+    if (deck.length === 0) return;
+    const all = activeCards();
+    const card = all[deck[pos]];
+    const wasKnown = isKnown(card);
+    if (wasKnown) known.delete(cardKey(card));
+    else known.add(cardKey(card));
+    saveKnown();
+
+    if (!showKnown && !wasKnown) {
+      // Just marked → drop from active deck
+      deck.splice(pos, 1);
+      if (pos >= deck.length) pos = 0;
+      render();
+    } else {
+      // Just unmarked, OR we're in show-all mode → keep position
+      render();
+    }
+  }
+
+  function toggleShowKnown() {
+    showKnown = !showKnown;
+    applyFilter();
+  }
+
+  function resetKnown() {
+    if (known.size === 0) return;
+    if (!confirm(`Reset all ${known.size} cards marked known? This can't be undone.`)) return;
+    known.clear();
+    saveKnown();
+    applyFilter();
+  }
+
   cardEl.addEventListener('click', flip);
   prevBtn.addEventListener('click', () => go(-1));
   nextBtn.addEventListener('click', () => go(1));
   shuffleBtn.addEventListener('click', shuffle);
   filterEl.addEventListener('change', applyFilter);
   tabBtns.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+  markBtn.addEventListener('click', toggleMarkCurrent);
+  toggleKnownBtn.addEventListener('click', toggleShowKnown);
+  resetKnownBtn.addEventListener('click', resetKnown);
 
   document.addEventListener('keydown', (e) => {
-    if (e.target.matches('select, input, textarea')) return;
+    if (e.target.matches('select, input, textarea, button')) return;
     if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); flip(); return; }
     if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); return; }
     if (e.key === 'ArrowRight') { e.preventDefault(); go(1);  return; }
+    if (e.key === 'k' || e.key === 'K') { e.preventDefault(); toggleMarkCurrent(); return; }
   });
 
   // Initial population

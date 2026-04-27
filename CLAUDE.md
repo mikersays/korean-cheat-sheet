@@ -95,7 +95,10 @@ If you add a new prerequisite or sequel, follow the same three-place pattern.
 
 - `python3 -m http.server 8765 --bind 127.0.0.1` from this repo
 - `python3 -m http.server 8766 --bind 127.0.0.1` from the reading-guide repo (different port so both can run)
-- Mobile audits via Playwright MCP — viewports 360 / 414 / 768. Screenshots go to `playwright-screenshots/` (gitignored). The Playwright MCP also writes to `.playwright-mcp/` and sometimes `audit/` — both gitignored.
+- **Playwright MCP** — when it's loaded in the session, use it for visual + interactive smoke tests of new features, not just mobile screenshots. It can drive real clicks, keyboard input, and inspect `localStorage` / `document` state — covering things `node --check` and `curl` can't (card flip, tab switching, mark-known persistence, dropdown population, filter narrowing, etc.). Reach for it whenever you ship a UI behavior change; don't claim a feature works on the basis of static checks alone.
+  - Mobile audit viewports: 360 / 414 / 768.
+  - Screenshots go to `playwright-screenshots/` (gitignored). The Playwright MCP also writes to `.playwright-mcp/` and sometimes `audit/` — both gitignored.
+  - If Playwright MCP is not loaded, say so explicitly when reporting a UI change, and ask the user to verify or to add the MCP.
 
 ## Things to avoid
 
