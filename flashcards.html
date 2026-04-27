@@ -202,6 +202,50 @@
     color: var(--ink-soft);
   }
 
+  /* ==================== MODE TABS ==================== */
+
+  .mode-tabs {
+    display: flex;
+    gap: 4px;
+    margin: 0 0 18px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .mode-tabs .tab {
+    background: transparent;
+    border: 0;
+    padding: 9px 18px 11px;
+    font-family: 'IBM Plex Sans', 'IBM Plex Sans KR', sans-serif;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+    color: var(--ink-faint);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 160ms ease, border-color 160ms ease;
+  }
+  .mode-tabs .tab:hover { color: var(--ink-soft); }
+  .mode-tabs .tab.active {
+    color: var(--vermillion);
+    border-bottom-color: var(--vermillion);
+  }
+  .mode-tabs .tab:focus-visible {
+    outline: 2px solid var(--vermillion);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .mode-tabs .tab .ko {
+    margin-left: 6px;
+    font-size: 0.92em;
+    color: var(--ink-faint);
+    transition: color 160ms ease;
+  }
+  .mode-tabs .tab.active .ko { color: var(--vermillion-deep); }
+  @media (prefers-color-scheme: dark) {
+    .mode-tabs .tab.active .ko { color: var(--vermillion); }
+  }
+
   /* ==================== TOOLBAR ==================== */
 
   .toolbar {
@@ -525,9 +569,10 @@
     header.title h1 .display-row:nth-child(2) { opacity: 0; animation: rise 800ms 280ms ease-out forwards; }
     header.title h1 .display-row:nth-child(3) { opacity: 0; animation: rise 800ms 380ms ease-out forwards; }
     header.title .lede { opacity: 0; animation: rise 800ms 520ms ease-out forwards; }
-    .toolbar { opacity: 0; animation: rise 700ms 700ms ease-out forwards; }
-    .card-frame { opacity: 0; animation: rise 800ms 800ms ease-out forwards; }
-    .card-nav { opacity: 0; animation: rise 700ms 920ms ease-out forwards; }
+    .mode-tabs { opacity: 0; animation: rise 700ms 660ms ease-out forwards; }
+    .toolbar { opacity: 0; animation: rise 700ms 740ms ease-out forwards; }
+    .card-frame { opacity: 0; animation: rise 800ms 820ms ease-out forwards; }
+    .card-nav { opacity: 0; animation: rise 700ms 940ms ease-out forwards; }
   }
   @media (prefers-reduced-motion: reduce) {
     .card { transition: none; }
@@ -580,38 +625,16 @@
     <span class="display-row muted">Flash Cards,</span>
     <span class="display-row"><span class="ko-title">카드</span></span>
   </h1>
-  <p class="lede">Click-to-flip cards drawn from the <a href="grammar-cheatsheet.html">Korean Grammar Cheat Sheet</a>. Tap or press <kbd>Space</kbd> to flip; <kbd>←</kbd> / <kbd>→</kbd> to navigate. Want written drills instead? Try the <a href="exercises.html">Practice page</a>.</p>
+  <p class="lede">Click-to-flip cards. The <strong>Grammar</strong> deck drills patterns from the <a href="grammar-cheatsheet.html">Cheat Sheet</a>; the <strong>Vocabulary</strong> deck covers everyday nouns, verbs, adjectives, adverbs, pronouns, and interjections. Tap or press <kbd>Space</kbd> to flip; <kbd>←</kbd> / <kbd>→</kbd> to navigate. Want written drills instead? Try the <a href="exercises.html">Practice page</a>.</p>
 </header>
 
+<div class="mode-tabs" role="tablist" aria-label="Deck mode">
+  <button type="button" class="tab active" data-mode="grammar" role="tab" aria-selected="true">Grammar<span class="ko">문법</span></button>
+  <button type="button" class="tab" data-mode="vocab" role="tab" aria-selected="false">Vocabulary<span class="ko">어휘</span></button>
+</div>
+
 <div class="toolbar" role="group" aria-label="Deck controls">
-  <select id="filter" aria-label="Filter cards by section">
-    <option value="all">All sections</option>
-    <option value="s0">§00 · Foundations</option>
-    <option value="s1">§01 · Word Order — SOV</option>
-    <option value="s2">§02 · Particles</option>
-    <option value="s3">§03 · Copula 이다 / 아니다</option>
-    <option value="s4">§04 · Verb / Adjective Stems</option>
-    <option value="s5">§05 · Speech Levels</option>
-    <option value="s6">§06 · Present Tense</option>
-    <option value="s7">§07 · Past Tense</option>
-    <option value="s8">§08 · Future / Probability</option>
-    <option value="s9">§09 · Negation</option>
-    <option value="s10">§10 · Honorifics</option>
-    <option value="s11">§11 · Connectors</option>
-    <option value="s12">§12 · Modifiers</option>
-    <option value="s13">§13 · Nominalization</option>
-    <option value="s14">§14 · Sentence-Final</option>
-    <option value="s15">§15 · Quoting</option>
-    <option value="s16">§16 · Numbers &amp; Counters</option>
-    <option value="s17">§17 · Pronouns</option>
-    <option value="s18">§18 · Question Words</option>
-    <option value="s19">§19 · Causative &amp; Passive</option>
-    <option value="s20">§20 · Irregular Stems</option>
-    <option value="s21">§21 · Building a Sentence</option>
-    <option value="s22">§22 · Decision Tree</option>
-    <option value="s23">§23 · Top 30 Endings</option>
-    <option value="s24">§24 · Study Tips</option>
-  </select>
+  <select id="filter" aria-label="Filter cards"></select>
   <button id="shuffle" type="button" class="shuffle" aria-label="Shuffle deck">
     <span class="stamp">⤳</span>Shuffle
   </button>
@@ -680,7 +703,732 @@
     s24: 'Study Tips'
   };
 
-  const cards = [
+  const posTitles = {
+    noun:         { en: 'Noun',         ko: '명사' },
+    verb:         { en: 'Verb',         ko: '동사' },
+    adjective:    { en: 'Adjective',    ko: '형용사' },
+    adverb:       { en: 'Adverb',       ko: '부사' },
+    pronoun:      { en: 'Pronoun',      ko: '대명사' },
+    interjection: { en: 'Interjection', ko: '감탄사' }
+  };
+
+  // Vocabulary deck — populated by build pipeline. Replace the [] below.
+  const vocabCards = [
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">가족</span>", back: "family. <span class=\"ko\">우리 가족은 네 명이에요.</span> (My family has four people.)" },
+    { pos: "noun", front: "Translate to Korean: \"mother\"", back: "<span class=\"ko\">어머니</span> (formal) / <span class=\"ko\">엄마</span> (casual, \"mom\"). <span class=\"ko\">어머니는 부엌에 계세요.</span> (Mother is in the kitchen.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">아버지</span>", back: "father (formal). Casual: <span class=\"ko\">아빠</span> (\"dad\"). <span class=\"ko\">아버지는 회사원이세요.</span> (My father is an office worker.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">형 vs 오빠</span>", back: "Both mean \"older brother.\" <span class=\"ko\">형</span> is used by males; <span class=\"ko\">오빠</span> by females. <span class=\"ko\">우리 형은 의사예요.</span> (My older brother is a doctor.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">누나 vs 언니</span>", back: "Both mean \"older sister.\" <span class=\"ko\">누나</span> is used by males; <span class=\"ko\">언니</span> by females. <span class=\"ko\">언니, 같이 가요!</span> (Sis, let's go together!)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">동생</span>", back: "younger sibling (gender-neutral). Specify with <span class=\"ko\">남동생</span> (younger brother) or <span class=\"ko\">여동생</span> (younger sister). <span class=\"ko\">제 동생은 학생이에요.</span> (My younger sibling is a student.)" },
+    { pos: "noun", front: "Translate to Korean: \"son\"", back: "<span class=\"ko\">아들</span>. <span class=\"ko\">아들이 두 명 있어요.</span> (I have two sons.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">딸</span>", back: "daughter. <span class=\"ko\">딸은 일곱 살이에요.</span> (My daughter is seven years old.)" },
+    { pos: "noun", front: "Translate to Korean: \"wife\"", back: "<span class=\"ko\">아내</span> (one's own wife, neutral). <span class=\"ko\">아내가 요리를 잘해요.</span> (My wife cooks well.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">남편</span>", back: "husband. <span class=\"ko\">남편은 지금 일해요.</span> (My husband is working now.)" },
+    { pos: "noun", front: "Translate to Korean: \"grandfather\"", back: "<span class=\"ko\">할아버지</span>. <span class=\"ko\">할아버지께서 신문을 읽으세요.</span> (Grandfather is reading the newspaper.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">할머니</span>", back: "grandmother. <span class=\"ko\">할머니는 떡을 만드세요.</span> (Grandmother is making rice cakes.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">부모님</span>", back: "parents (honorific). <span class=\"ko\">부모님께 전화해요.</span> (I call my parents.)" },
+    { pos: "noun", front: "Translate to Korean: \"baby / infant\"", back: "<span class=\"ko\">아기</span>. <span class=\"ko\">아기가 자고 있어요.</span> (The baby is sleeping.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">선생님</span>", back: "teacher (also a polite address for any respected person). <span class=\"ko\">선생님, 질문이 있어요.</span> (Teacher, I have a question.)" },
+    { pos: "noun", front: "Translate to Korean: \"student\"", back: "<span class=\"ko\">학생</span>. <span class=\"ko\">저는 대학생이에요.</span> (I'm a university student.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">의사</span>", back: "doctor (medical). <span class=\"ko\">의사가 되고 싶어요.</span> (I want to become a doctor.)" },
+    { pos: "noun", front: "Translate to Korean: \"nurse\"", back: "<span class=\"ko\">간호사</span>. <span class=\"ko\">간호사가 약을 줘요.</span> (The nurse gives medicine.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">회사원</span>", back: "office worker, company employee. <span class=\"ko\">아버지는 회사원이세요.</span> (My father is a company employee.)" },
+    { pos: "noun", front: "Translate to Korean: \"police officer\"", back: "<span class=\"ko\">경찰</span> (also \"the police\" collectively); a single officer is <span class=\"ko\">경찰관</span>. <span class=\"ko\">경찰을 불러요!</span> (Call the police!)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">요리사</span>", back: "cook, chef. <span class=\"ko\">그 요리사는 유명해요.</span> (That chef is famous.)" },
+    { pos: "noun", front: "Translate to Korean: \"singer\"", back: "<span class=\"ko\">가수</span>. <span class=\"ko\">제가 좋아하는 가수예요.</span> (It's the singer I like.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">배우</span>", back: "actor/actress. <span class=\"ko\">그 배우는 정말 잘생겼어요.</span> (That actor is really handsome.)" },
+    { pos: "noun", front: "Translate to Korean: \"athlete\"", back: "<span class=\"ko\">운동선수</span>. <span class=\"ko\">그는 유명한 운동선수예요.</span> (He is a famous athlete.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">친구</span>", back: "friend. <span class=\"ko\">친구하고 영화를 봐요.</span> (I watch a movie with my friend.)" },
+    { pos: "noun", front: "Translate to Korean: \"person\"", back: "<span class=\"ko\">사람</span>. <span class=\"ko\">저 사람은 누구예요?</span> (Who is that person?)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">아이</span>", back: "child. Often shortened to <span class=\"ko\">애</span> in speech. <span class=\"ko\">아이가 공원에서 놀아요.</span> (The child plays at the park.)" },
+    { pos: "noun", front: "Translate to Korean: \"adult\"", back: "<span class=\"ko\">어른</span>. <span class=\"ko\">어른께 인사하세요.</span> (Greet the adults.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">손님</span>", back: "guest, customer. <span class=\"ko\">손님이 오셨어요.</span> (A guest has arrived.)" },
+    { pos: "noun", front: "Translate to Korean: \"neighbor\"", back: "<span class=\"ko\">이웃</span>. <span class=\"ko\">이웃이 친절해요.</span> (My neighbor is kind.)" },
+
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">집</span>", back: "house, home. <span class=\"ko\">집에 가요.</span> (I'm going home.)" },
+    { pos: "noun", front: "Translate to Korean: \"room\"", back: "<span class=\"ko\">방</span>. <span class=\"ko\">방이 깨끗해요.</span> (The room is clean.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">부엌</span>", back: "kitchen. Also <span class=\"ko\">주방</span> (Sino-Korean, common in real-estate listings). <span class=\"ko\">부엌에서 요리해요.</span> (I cook in the kitchen.)" },
+    { pos: "noun", front: "Translate to Korean: \"bathroom / toilet\"", back: "<span class=\"ko\">화장실</span>. <span class=\"ko\">화장실이 어디예요?</span> (Where is the bathroom?)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">거실</span>", back: "living room. <span class=\"ko\">거실에서 텔레비전을 봐요.</span> (I watch TV in the living room.)" },
+    { pos: "noun", front: "Translate to Korean: \"bedroom\"", back: "<span class=\"ko\">침실</span>. <span class=\"ko\">침실이 작아요.</span> (The bedroom is small.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">학교</span>", back: "school. <span class=\"ko\">저는 학교에 가요.</span> (I go to school.)" },
+    { pos: "noun", front: "Translate to Korean: \"company / office\"", back: "<span class=\"ko\">회사</span>. <span class=\"ko\">회사가 강남에 있어요.</span> (The company is in Gangnam.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">도서관</span>", back: "library. <span class=\"ko\">도서관에서 공부해요.</span> (I study at the library.)" },
+    { pos: "noun", front: "Translate to Korean: \"hospital\"", back: "<span class=\"ko\">병원</span>. <span class=\"ko\">병원에 가야 해요.</span> (I have to go to the hospital.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">약국</span>", back: "pharmacy. <span class=\"ko\">약국에서 약을 사요.</span> (I buy medicine at the pharmacy.)" },
+    { pos: "noun", front: "Translate to Korean: \"restaurant\"", back: "<span class=\"ko\">식당</span>. <span class=\"ko\">이 식당은 맛있어요.</span> (This restaurant is delicious.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">카페</span>", back: "cafe. <span class=\"ko\">카페에서 친구를 만나요.</span> (I'm meeting a friend at the cafe.)" },
+    { pos: "noun", front: "Translate to Korean: \"park\"", back: "<span class=\"ko\">공원</span>. <span class=\"ko\">공원에서 산책해요.</span> (I take a walk in the park.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">시장</span>", back: "market (traditional). <span class=\"ko\">시장에서 채소를 사요.</span> (I buy vegetables at the market.)" },
+    { pos: "noun", front: "Translate to Korean: \"department store\"", back: "<span class=\"ko\">백화점</span>. <span class=\"ko\">백화점이 비싸요.</span> (Department stores are expensive.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">마트</span>", back: "supermarket, grocery store (loanword from \"mart\"). <span class=\"ko\">마트에 우유 사러 가요.</span> (I'm going to the mart to buy milk.)" },
+    { pos: "noun", front: "Translate to Korean: \"post office\"", back: "<span class=\"ko\">우체국</span>. <span class=\"ko\">우체국에서 편지를 보내요.</span> (I send a letter at the post office.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">은행</span>", back: "bank. <span class=\"ko\">은행이 문을 닫았어요.</span> (The bank is closed.)" },
+    { pos: "noun", front: "Translate to Korean: \"hotel\"", back: "<span class=\"ko\">호텔</span>. <span class=\"ko\">호텔에서 묵어요.</span> (I'm staying at a hotel.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">공항</span>", back: "airport. <span class=\"ko\">공항까지 한 시간 걸려요.</span> (It takes an hour to the airport.)" },
+    { pos: "noun", front: "Translate to Korean: \"station (subway/train)\"", back: "<span class=\"ko\">역</span>. Often suffixed: <span class=\"ko\">서울역</span> (Seoul Station). <span class=\"ko\">역에서 만나요.</span> (Let's meet at the station.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">정류장</span>", back: "(bus) stop. <span class=\"ko\">버스 정류장이 저기 있어요.</span> (The bus stop is over there.)" },
+    { pos: "noun", front: "Translate to Korean: \"movie theater\"", back: "<span class=\"ko\">영화관</span>. Also <span class=\"ko\">극장</span>. <span class=\"ko\">영화관에 가요.</span> (I'm going to the movies.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">미술관</span>", back: "art museum / gallery. <span class=\"ko\">미술관에서 그림을 봐요.</span> (I look at paintings at the art museum.)" },
+    { pos: "noun", front: "Translate to Korean: \"museum\"", back: "<span class=\"ko\">박물관</span> (history/artifacts). Art museum is <span class=\"ko\">미술관</span>. <span class=\"ko\">박물관이 무료예요.</span> (The museum is free.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">교회</span>", back: "church (Christian). <span class=\"ko\">일요일에 교회에 가요.</span> (I go to church on Sunday.)" },
+    { pos: "noun", front: "Translate to Korean: \"Buddhist temple\"", back: "<span class=\"ko\">절</span>. <span class=\"ko\">산속에 절이 있어요.</span> (There's a temple in the mountains.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">산</span>", back: "mountain. <span class=\"ko\">주말에 산에 올라가요.</span> (I climb a mountain on weekends.)" },
+    { pos: "noun", front: "Translate to Korean: \"sea / ocean\"", back: "<span class=\"ko\">바다</span>. <span class=\"ko\">바다가 보여요.</span> (I can see the sea.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">강</span>", back: "river. <span class=\"ko\">한강이 길어요.</span> (The Han River is long.)" },
+    { pos: "noun", front: "Translate to Korean: \"lake\"", back: "<span class=\"ko\">호수</span>. <span class=\"ko\">호수가 조용해요.</span> (The lake is quiet.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">섬</span>", back: "island. <span class=\"ko\">제주도는 큰 섬이에요.</span> (Jeju is a big island.)" },
+    { pos: "noun", front: "Translate to Korean: \"forest\"", back: "<span class=\"ko\">숲</span>. <span class=\"ko\">숲에서 새소리가 들려요.</span> (I hear birdsong in the forest.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">하늘</span>", back: "sky. <span class=\"ko\">하늘이 파래요.</span> (The sky is blue.)" },
+    { pos: "noun", front: "Translate to Korean: \"ground / earth (land)\"", back: "<span class=\"ko\">땅</span>. <span class=\"ko\">땅이 젖었어요.</span> (The ground is wet.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">한국</span>", back: "Korea (South Korea). <span class=\"ko\">한국에 살아요.</span> (I live in Korea.)" },
+    { pos: "noun", front: "Translate to Korean: \"USA\"", back: "<span class=\"ko\">미국</span>. <span class=\"ko\">미국 사람이에요.</span> (I'm American.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">일본</span>", back: "Japan. <span class=\"ko\">일본 음식을 좋아해요.</span> (I like Japanese food.)" },
+    { pos: "noun", front: "Translate to Korean: \"China\"", back: "<span class=\"ko\">중국</span>. <span class=\"ko\">중국어를 배워요.</span> (I'm learning Chinese.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">영국</span>", back: "the UK / England. <span class=\"ko\">영국에서 왔어요.</span> (I'm from the UK.)" },
+    { pos: "noun", front: "Translate to Korean: \"Germany\"", back: "<span class=\"ko\">독일</span>. <span class=\"ko\">독일 차가 좋아요.</span> (German cars are good.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">프랑스</span>", back: "France. <span class=\"ko\">프랑스 빵이 맛있어요.</span> (French bread is delicious.)" },
+    { pos: "noun", front: "Translate to Korean: \"Canada\"", back: "<span class=\"ko\">캐나다</span>. <span class=\"ko\">캐나다는 아주 추워요.</span> (Canada is very cold.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">호주</span>", back: "Australia. <span class=\"ko\">호주에 가 보고 싶어요.</span> (I want to visit Australia.)" },
+
+    { pos: "noun", front: "Translate to Korean: \"Monday\"", back: "<span class=\"ko\">월요일</span>. <span class=\"ko\">월요일에 회의가 있어요.</span> (There's a meeting on Monday.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">화요일</span>", back: "Tuesday. <span class=\"ko\">화요일까지 끝내야 해요.</span> (I have to finish by Tuesday.)" },
+    { pos: "noun", front: "Translate to Korean: \"Wednesday\"", back: "<span class=\"ko\">수요일</span>. <span class=\"ko\">수요일에 만나요.</span> (Let's meet on Wednesday.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">목요일</span>", back: "Thursday. <span class=\"ko\">목요일이 제일 바빠요.</span> (Thursdays are the busiest.)" },
+    { pos: "noun", front: "Translate to Korean: \"Friday\"", back: "<span class=\"ko\">금요일</span>. <span class=\"ko\">금요일 밤이 좋아요.</span> (Friday nights are great.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">토요일</span>", back: "Saturday. <span class=\"ko\">토요일에 영화 봐요.</span> (I watch a movie on Saturday.)" },
+    { pos: "noun", front: "Translate to Korean: \"Sunday\"", back: "<span class=\"ko\">일요일</span>. <span class=\"ko\">일요일에 쉬어요.</span> (I rest on Sunday.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">봄</span>", back: "spring. <span class=\"ko\">봄에 꽃이 피어요.</span> (Flowers bloom in spring.)" },
+    { pos: "noun", front: "Translate to Korean: \"summer\"", back: "<span class=\"ko\">여름</span>. <span class=\"ko\">여름이 너무 더워요.</span> (Summer is too hot.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">가을</span>", back: "autumn / fall. <span class=\"ko\">가을 단풍이 예뻐요.</span> (Autumn leaves are pretty.)" },
+    { pos: "noun", front: "Translate to Korean: \"winter\"", back: "<span class=\"ko\">겨울</span>. <span class=\"ko\">겨울에 눈이 와요.</span> (It snows in winter.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">아침</span>", back: "morning; also \"breakfast.\" <span class=\"ko\">아침을 먹었어요.</span> (I ate breakfast / I ate in the morning.)" },
+    { pos: "noun", front: "Translate to Korean: \"lunch / noon\"", back: "<span class=\"ko\">점심</span> (means both \"midday\" and \"the lunch meal\"). <span class=\"ko\">점심 같이 먹을래요?</span> (Want to have lunch together?)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">저녁</span>", back: "evening; also \"dinner.\" <span class=\"ko\">저녁에 전화할게요.</span> (I'll call in the evening.)" },
+    { pos: "noun", front: "Translate to Korean: \"night\"", back: "<span class=\"ko\">밤</span>. <span class=\"ko\">밤이 늦었어요.</span> (It's gotten late at night.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">새벽</span>", back: "dawn, early morning (roughly midnight to sunrise). <span class=\"ko\">새벽에 일어나요.</span> (I wake up at dawn.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">오전 vs 오후</span>", back: "<span class=\"ko\">오전</span> = a.m. (before noon); <span class=\"ko\">오후</span> = p.m. (afternoon). <span class=\"ko\">오후 세 시에 만나요.</span> (Let's meet at 3 p.m.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">오늘</span>", back: "today. <span class=\"ko\">오늘 날씨가 좋아요.</span> (The weather is nice today.)" },
+    { pos: "noun", front: "Translate to Korean: \"yesterday\"", back: "<span class=\"ko\">어제</span>. <span class=\"ko\">어제 친구를 만났어요.</span> (I met a friend yesterday.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">내일</span>", back: "tomorrow. <span class=\"ko\">내일 봐요!</span> (See you tomorrow!)" },
+    { pos: "noun", front: "Translate to Korean: \"the day after tomorrow\"", back: "<span class=\"ko\">모레</span>. <span class=\"ko\">모레까지 끝낼게요.</span> (I'll finish it by the day after tomorrow.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">그저께</span>", back: "the day before yesterday. <span class=\"ko\">그저께 비가 왔어요.</span> (It rained the day before yesterday.)" },
+    { pos: "noun", front: "Translate to Korean: \"now\"", back: "<span class=\"ko\">지금</span>. <span class=\"ko\">지금 어디예요?</span> (Where are you now?)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">나중에</span>", back: "later. <span class=\"ko\">나중에 얘기해요.</span> (Let's talk later.)" },
+    { pos: "noun", front: "Translate to Korean: \"time\"", back: "<span class=\"ko\">시간</span>. Also means \"hours\" as a counter. <span class=\"ko\">시간이 없어요.</span> (I don't have time.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">분</span>", back: "minute(s). Also a counter for people (polite). <span class=\"ko\">십 분 후에 와요.</span> (Come in ten minutes.)" },
+    { pos: "noun", front: "Translate to Korean: \"second (unit of time)\"", back: "<span class=\"ko\">초</span>. <span class=\"ko\">삼십 초만 기다려요.</span> (Just wait thirty seconds.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">날짜</span>", back: "date (calendar). <span class=\"ko\">날짜를 정해요.</span> (Let's decide the date.)" },
+    { pos: "noun", front: "Translate to Korean: \"week\"", back: "<span class=\"ko\">주</span> (also <span class=\"ko\">주일</span>). <span class=\"ko\">다음 주에 봐요.</span> (See you next week.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">주말</span>", back: "weekend. <span class=\"ko\">주말 잘 보내세요.</span> (Have a good weekend.)" },
+    { pos: "noun", front: "Translate to Korean: \"weekday\"", back: "<span class=\"ko\">평일</span>. <span class=\"ko\">평일에는 바빠요.</span> (I'm busy on weekdays.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">달</span>", back: "month; also \"the moon.\" Counter: <span class=\"ko\">한 달, 두 달</span>. <span class=\"ko\">한 달 동안 여행했어요.</span> (I traveled for a month.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">달 vs 월</span>", back: "Both mean \"month.\" <span class=\"ko\">달</span> counts duration (\"two months\"). <span class=\"ko\">월</span> names the calendar month: <span class=\"ko\">일월, 이월…</span> (January, February…). <span class=\"ko\">시월에 결혼해요.</span> (I'm getting married in October.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">년</span>", back: "year (Sino-Korean, used with numbers). <span class=\"ko\">이천이십육 년이에요.</span> (It's 2026.)" },
+    { pos: "noun", front: "Translate to Korean: \"hour (o'clock)\"", back: "<span class=\"ko\">시</span>. Used with native numbers: <span class=\"ko\">한 시, 두 시…</span>. <span class=\"ko\">지금 몇 시예요?</span> (What time is it now?)" },
+
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">날씨</span>", back: "weather. <span class=\"ko\">오늘 날씨가 어때요?</span> (How's the weather today?)" },
+    { pos: "noun", front: "Translate to Korean: \"rain\"", back: "<span class=\"ko\">비</span>. Verb phrase: <span class=\"ko\">비가 오다</span> (\"to rain,\" lit. \"rain comes\"). <span class=\"ko\">비가 와요.</span> (It's raining.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">눈</span>", back: "snow (also \"eye\" — same spelling, different word). <span class=\"ko\">눈이 많이 와요.</span> (It's snowing a lot.)" },
+    { pos: "noun", front: "Translate to Korean: \"wind\"", back: "<span class=\"ko\">바람</span>. <span class=\"ko\">바람이 세요.</span> (The wind is strong.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">구름</span>", back: "cloud. <span class=\"ko\">구름이 많아요.</span> (It's cloudy / there are many clouds.)" },
+    { pos: "noun", front: "Translate to Korean: \"sunlight\"", back: "<span class=\"ko\">햇빛</span> (or <span class=\"ko\">햇살</span> for soft sunbeams). <span class=\"ko\">햇빛이 강해요.</span> (The sunlight is strong.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">안개</span>", back: "fog, mist. <span class=\"ko\">안개가 짙어요.</span> (The fog is thick.)" },
+    { pos: "noun", front: "Translate to Korean: \"storm\"", back: "<span class=\"ko\">폭풍</span>. <span class=\"ko\">폭풍이 와요.</span> (A storm is coming.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">더위</span>", back: "the heat (oppressive hot weather). <span class=\"ko\">더위를 먹었어요.</span> (I got heatstroke.)" },
+    { pos: "noun", front: "Translate to Korean: \"the cold (cold weather)\"", back: "<span class=\"ko\">추위</span>. <span class=\"ko\">추위에 약해요.</span> (I'm sensitive to the cold.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">기온</span>", back: "(air) temperature. <span class=\"ko\">기온이 영하예요.</span> (The temperature is below zero.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">온도 vs 기온</span>", back: "<span class=\"ko\">온도</span> = temperature (general — water, body, room). <span class=\"ko\">기온</span> = air temperature specifically. <span class=\"ko\">물 온도가 높아요.</span> (The water temperature is high.)" },
+
+    // ===== Food / staples =====
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">밥</span>", back: "rice / cooked rice (or \"meal\"). <span class=\"ko\">밥 먹었어요?</span> (Have you eaten?)" },
+    { pos: "noun", front: "Translate to Korean: \"kimchi\"", back: "<span class=\"ko\">김치</span>. <span class=\"ko\">김치를 좋아해요.</span> (I like kimchi.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">반찬</span>", back: "side dish. <span class=\"ko\">반찬이 많아요.</span> (There are lots of side dishes.)" },
+    { pos: "noun", front: "Translate to Korean: \"ramyeon / instant noodles\"", back: "<span class=\"ko\">라면</span>. <span class=\"ko\">밤에 라면을 끓였어요.</span> (I made ramyeon at night.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">비빔밥</span>", back: "bibimbap (mixed rice). <span class=\"ko\">비빔밥 하나 주세요.</span> (One bibimbap, please.)" },
+    { pos: "noun", front: "Translate to Korean: \"bulgogi\"", back: "<span class=\"ko\">불고기</span>. <span class=\"ko\">불고기는 달콤해요.</span> (Bulgogi is sweet.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">떡볶이</span>", back: "tteokbokki (spicy rice cakes). <span class=\"ko\">떡볶이가 매워요.</span> (Tteokbokki is spicy.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">국 vs 찌개</span>", back: "<span class=\"ko\">국</span> = thin, brothy soup; <span class=\"ko\">찌개</span> = thick, hearty stew. <span class=\"ko\">국보다 찌개가 진해요.</span> (Stew is richer than soup.)" },
+    { pos: "noun", front: "Translate to Korean: \"red chili paste\"", back: "<span class=\"ko\">고추장</span>. <span class=\"ko\">고추장을 조금 넣어요.</span> (Add a little gochujang.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">간장</span>", back: "soy sauce. <span class=\"ko\">간장 좀 주세요.</span> (Please pass the soy sauce.)" },
+    { pos: "noun", front: "Translate to Korean: \"salt\"", back: "<span class=\"ko\">소금</span>. <span class=\"ko\">소금을 조금만 넣으세요.</span> (Add just a little salt.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">설탕</span>", back: "sugar. <span class=\"ko\">커피에 설탕을 넣어요.</span> (I put sugar in my coffee.)" },
+
+    // ===== Meat / fish / protein =====
+    { pos: "noun", front: "Translate to Korean: \"meat\"", back: "<span class=\"ko\">고기</span>. <span class=\"ko\">고기를 안 먹어요.</span> (I don't eat meat.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">소고기</span>", back: "beef. <span class=\"ko\">소고기가 비싸요.</span> (Beef is expensive.)" },
+    { pos: "noun", front: "Translate to Korean: \"pork\"", back: "<span class=\"ko\">돼지고기</span>. <span class=\"ko\">돼지고기를 구웠어요.</span> (I grilled pork.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">닭고기</span>", back: "chicken (meat). <span class=\"ko\">닭고기를 좋아해요.</span> (I like chicken.)" },
+    { pos: "noun", front: "Translate to Korean: \"fish (as food)\"", back: "<span class=\"ko\">생선</span>. <span class=\"ko\">생선을 구웠어요.</span> (I grilled the fish.)" },
+    { pos: "noun", front: "Translate to Korean: \"egg\"", back: "<span class=\"ko\">계란</span>. <span class=\"ko\">계란 두 개 주세요.</span> (Two eggs, please.)" },
+
+    // ===== Vegetables / fruit =====
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">야채 vs 채소</span>", back: "Both mean \"vegetables\"; <span class=\"ko\">채소</span> is more native/written, <span class=\"ko\">야채</span> more conversational. <span class=\"ko\">채소를 씻어요.</span> (I'm washing vegetables.)" },
+    { pos: "noun", front: "Translate to Korean: \"fruit\"", back: "<span class=\"ko\">과일</span>. <span class=\"ko\">과일을 매일 먹어요.</span> (I eat fruit every day.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">사과</span>", back: "apple. <span class=\"ko\">사과 한 개 주세요.</span> (Please give me one apple.)" },
+    { pos: "noun", front: "Translate to Korean: \"strawberry\"", back: "<span class=\"ko\">딸기</span>. <span class=\"ko\">딸기를 좋아해요.</span> (I like strawberries.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">수박</span>", back: "watermelon. <span class=\"ko\">여름에는 수박이 최고예요.</span> (Watermelon is the best in summer.)" },
+    { pos: "noun", front: "Translate to Korean: \"tangerine\"", back: "<span class=\"ko\">귤</span>. <span class=\"ko\">제주도 귤이 유명해요.</span> (Jeju tangerines are famous.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">오이</span>", back: "cucumber. <span class=\"ko\">오이를 싫어해요.</span> (I dislike cucumber.)" },
+    { pos: "noun", front: "Translate to Korean: \"onion\"", back: "<span class=\"ko\">양파</span>. <span class=\"ko\">양파를 썰면 눈물이 나요.</span> (My eyes water when I cut onions.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">마늘</span>", back: "garlic. <span class=\"ko\">한국 음식에는 마늘이 많아요.</span> (Korean food has lots of garlic.)" },
+    { pos: "noun", front: "Translate to Korean: \"potato\"", back: "<span class=\"ko\">감자</span>. <span class=\"ko\">감자를 삶았어요.</span> (I boiled the potatoes.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">고구마</span>", back: "sweet potato. <span class=\"ko\">군고구마가 따뜻해요.</span> (The roasted sweet potato is warm.)" },
+
+    // ===== Bread / sweets =====
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">빵</span>", back: "bread. <span class=\"ko\">아침에 빵을 먹어요.</span> (I eat bread in the morning.)" },
+    { pos: "noun", front: "Translate to Korean: \"cake\"", back: "<span class=\"ko\">케이크</span>. <span class=\"ko\">생일 케이크를 샀어요.</span> (I bought a birthday cake.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">아이스크림</span>", back: "ice cream. <span class=\"ko\">더우니까 아이스크림 먹자.</span> (It's hot, let's get ice cream.)" },
+
+    // ===== Drinks =====
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">우유</span>", back: "milk. <span class=\"ko\">우유는 냉장고에 있어요.</span> (The milk is in the fridge.)" },
+    { pos: "noun", front: "Translate to Korean: \"water\"", back: "<span class=\"ko\">물</span>. <span class=\"ko\">물 한 잔 주세요.</span> (Please give me a glass of water.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">차</span>", back: "tea. <span class=\"ko\">녹차를 마셔요.</span> (I'm drinking green tea.)" },
+    { pos: "noun", front: "Translate to Korean: \"coffee\"", back: "<span class=\"ko\">커피</span>. <span class=\"ko\">아침마다 커피를 마셔요.</span> (I drink coffee every morning.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">술 vs 소주</span>", back: "<span class=\"ko\">술</span> = alcohol in general; <span class=\"ko\">소주</span> = a specific Korean distilled liquor. <span class=\"ko\">술 중에 소주를 제일 좋아해요.</span> (Of all liquors, I like soju the most.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">맥주</span>", back: "beer. <span class=\"ko\">맥주 한 병 주세요.</span> (One bottle of beer, please.)" },
+
+    // ===== Body — head =====
+    { pos: "noun", front: "Translate to Korean: \"head\"", back: "<span class=\"ko\">머리</span>. <span class=\"ko\">머리가 아파요.</span> (I have a headache.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">얼굴</span>", back: "face. <span class=\"ko\">얼굴이 빨개졌어요.</span> (My face turned red.)" },
+    { pos: "noun", front: "Translate to Korean: \"eye\"", back: "<span class=\"ko\">눈</span>. <span class=\"ko\">눈이 피곤해요.</span> (My eyes are tired.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">코</span>", back: "nose. <span class=\"ko\">코가 막혔어요.</span> (My nose is stuffed up.)" },
+    { pos: "noun", front: "Translate to Korean: \"mouth\"", back: "<span class=\"ko\">입</span>. <span class=\"ko\">입을 크게 벌리세요.</span> (Open your mouth wide.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">이</span>", back: "tooth. <span class=\"ko\">이가 아파요.</span> (My tooth hurts.)" },
+    { pos: "noun", front: "Translate to Korean: \"ear\"", back: "<span class=\"ko\">귀</span>. <span class=\"ko\">귀가 잘 안 들려요.</span> (I can't hear well.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">목</span>", back: "neck / throat. <span class=\"ko\">목이 아파요.</span> (My throat hurts.)" },
+
+    // ===== Body — torso / limbs =====
+    { pos: "noun", front: "Translate to Korean: \"shoulder\"", back: "<span class=\"ko\">어깨</span>. <span class=\"ko\">어깨가 뭉쳤어요.</span> (My shoulders are knotted up.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">팔</span>", back: "arm. <span class=\"ko\">팔을 다쳤어요.</span> (I hurt my arm.)" },
+    { pos: "noun", front: "Translate to Korean: \"hand\"", back: "<span class=\"ko\">손</span>. <span class=\"ko\">손을 씻으세요.</span> (Wash your hands.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">배</span>", back: "stomach / belly. <span class=\"ko\">배가 고파요.</span> (I'm hungry.)" },
+    { pos: "noun", front: "Translate to Korean: \"back (body part)\"", back: "<span class=\"ko\">등</span>. <span class=\"ko\">등이 가려워요.</span> (My back is itchy.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">허리</span>", back: "waist / lower back. <span class=\"ko\">허리가 아파요.</span> (My lower back hurts.)" },
+    { pos: "noun", front: "Translate to Korean: \"leg\"", back: "<span class=\"ko\">다리</span>. <span class=\"ko\">다리가 길어요.</span> (Their legs are long.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">발</span>", back: "foot. <span class=\"ko\">발이 차가워요.</span> (My feet are cold.)" },
+
+    // ===== Body — internal / general =====
+    { pos: "noun", front: "Translate to Korean: \"blood\"", back: "<span class=\"ko\">피</span>. <span class=\"ko\">피가 나요.</span> (I'm bleeding.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">피부</span>", back: "skin. <span class=\"ko\">피부가 건조해요.</span> (My skin is dry.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">마음 vs 심장</span>", back: "<span class=\"ko\">마음</span> = heart in the emotional/mental sense; <span class=\"ko\">심장</span> = the physical organ. <span class=\"ko\">심장이 빨리 뛰어요.</span> (My heart is beating fast.)" },
+
+    // ===== Clothes / wear =====
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">옷</span>", back: "clothes. <span class=\"ko\">옷을 갈아입었어요.</span> (I changed clothes.)" },
+    { pos: "noun", front: "Translate to Korean: \"pants / trousers\"", back: "<span class=\"ko\">바지</span>. <span class=\"ko\">바지가 너무 길어요.</span> (The pants are too long.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">치마</span>", back: "skirt. <span class=\"ko\">치마가 예뻐요.</span> (The skirt is pretty.)" },
+    { pos: "noun", front: "Translate to Korean: \"T-shirt\"", back: "<span class=\"ko\">티셔츠</span>. <span class=\"ko\">흰 티셔츠를 자주 입어요.</span> (I often wear white T-shirts.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">코트</span>", back: "coat. <span class=\"ko\">코트를 입으세요.</span> (Put on a coat.)" },
+    { pos: "noun", front: "Translate to Korean: \"socks\"", back: "<span class=\"ko\">양말</span>. <span class=\"ko\">양말에 구멍이 났어요.</span> (There's a hole in my sock.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">신발 vs 운동화</span>", back: "<span class=\"ko\">신발</span> = footwear in general; <span class=\"ko\">운동화</span> = sneakers/athletic shoes. <span class=\"ko\">새 운동화를 샀어요.</span> (I bought new sneakers.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">모자</span>", back: "hat / cap. <span class=\"ko\">모자를 썼어요.</span> (I wore a hat.)" },
+    { pos: "noun", front: "Translate to Korean: \"glasses\"", back: "<span class=\"ko\">안경</span>. <span class=\"ko\">안경을 안 쓰면 안 보여요.</span> (I can't see without my glasses.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">시계</span>", back: "watch / clock. <span class=\"ko\">시계가 멈췄어요.</span> (The clock stopped.)" },
+    { pos: "noun", front: "Translate to Korean: \"bag\"", back: "<span class=\"ko\">가방</span>. <span class=\"ko\">가방이 무거워요.</span> (The bag is heavy.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">지갑</span>", back: "wallet. <span class=\"ko\">지갑을 잃어버렸어요.</span> (I lost my wallet.)" },
+    { pos: "noun", front: "Translate to Korean: \"umbrella\"", back: "<span class=\"ko\">우산</span>. <span class=\"ko\">우산을 가져 가세요.</span> (Take an umbrella with you.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">장갑</span>", back: "gloves. <span class=\"ko\">겨울에는 장갑을 껴요.</span> (I wear gloves in winter.)" },
+
+    // ===== Household — furniture =====
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">책상</span>", back: "desk. <span class=\"ko\">책상 위에 책이 있어요.</span> (There's a book on the desk.)" },
+    { pos: "noun", front: "Translate to Korean: \"chair\"", back: "<span class=\"ko\">의자</span>. <span class=\"ko\">의자에 앉으세요.</span> (Please sit on the chair.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">침대</span>", back: "bed. <span class=\"ko\">침대가 푹신해요.</span> (The bed is soft.)" },
+    { pos: "noun", front: "Translate to Korean: \"sofa\"", back: "<span class=\"ko\">소파</span>. <span class=\"ko\">소파에서 잠들었어요.</span> (I fell asleep on the sofa.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">옷장</span>", back: "wardrobe / closet. <span class=\"ko\">옷을 옷장에 걸어요.</span> (I hang clothes in the wardrobe.)" },
+    { pos: "noun", front: "Translate to Korean: \"mirror\"", back: "<span class=\"ko\">거울</span>. <span class=\"ko\">거울을 보세요.</span> (Look in the mirror.)" },
+
+    // ===== Household — kitchen / appliances =====
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">냉장고</span>", back: "refrigerator. <span class=\"ko\">우유는 냉장고에 있어요.</span> (The milk is in the fridge.)" },
+    { pos: "noun", front: "Translate to Korean: \"washing machine\"", back: "<span class=\"ko\">세탁기</span>. <span class=\"ko\">세탁기가 고장 났어요.</span> (The washing machine broke.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">청소기</span>", back: "vacuum cleaner. <span class=\"ko\">청소기를 돌렸어요.</span> (I ran the vacuum.)" },
+    { pos: "noun", front: "Translate to Korean: \"television / TV\"", back: "<span class=\"ko\">텔레비전</span>. <span class=\"ko\">텔레비전을 보고 있어요.</span> (I'm watching TV.)" },
+    { pos: "noun", front: "Translate to Korean: \"cellphone\"", back: "<span class=\"ko\">휴대폰</span>. <span class=\"ko\">휴대폰을 충전했어요.</span> (I charged my phone.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">컴퓨터</span>", back: "computer. <span class=\"ko\">컴퓨터가 느려요.</span> (The computer is slow.)" },
+    { pos: "noun", front: "Translate to Korean: \"laptop\"", back: "<span class=\"ko\">노트북</span>. <span class=\"ko\">노트북을 가지고 왔어요.</span> (I brought my laptop.)" },
+    { pos: "noun", front: "Translate to Korean: \"microwave\"", back: "<span class=\"ko\">전자레인지</span>. <span class=\"ko\">전자레인지에 데웠어요.</span> (I heated it in the microwave.)" },
+
+    // ===== Household — building / utility =====
+    { pos: "noun", front: "Translate to Korean: \"door\"", back: "<span class=\"ko\">문</span>. <span class=\"ko\">문을 닫아 주세요.</span> (Please close the door.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">창문</span>", back: "window. <span class=\"ko\">창문을 열까요?</span> (Shall I open the window?)" },
+    { pos: "noun", front: "Translate to Korean: \"wall\"", back: "<span class=\"ko\">벽</span>. <span class=\"ko\">벽이 하얘요.</span> (The wall is white.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">바닥</span>", back: "floor. <span class=\"ko\">바닥이 미끄러워요.</span> (The floor is slippery.)" },
+    { pos: "noun", front: "Translate to Korean: \"stairs\"", back: "<span class=\"ko\">계단</span>. <span class=\"ko\">계단으로 올라갔어요.</span> (I went up by the stairs.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">엘리베이터</span>", back: "elevator. <span class=\"ko\">엘리베이터가 안 와요.</span> (The elevator isn't coming.)" },
+    { pos: "noun", front: "Translate to Korean: \"key\"", back: "<span class=\"ko\">열쇠</span>. <span class=\"ko\">열쇠를 잃어버렸어요.</span> (I lost the key.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">비밀번호</span>", back: "password / PIN. <span class=\"ko\">비밀번호를 잊어버렸어요.</span> (I forgot the password.)" },
+
+    // === Transport ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">차</span>", back: "car (also: tea, depending on context). <span class=\"ko\">차로 가요.</span> (I go by car.)" },
+    { pos: "noun", front: "Translate to Korean: \"bus\"", back: "<span class=\"ko\">버스</span>. <span class=\"ko\">버스를 타요.</span> (I take the bus.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">지하철</span>", back: "subway. <span class=\"ko\">지하철이 빨라요.</span> (The subway is fast.)" },
+    { pos: "noun", front: "Translate to Korean: \"taxi\"", back: "<span class=\"ko\">택시</span>. <span class=\"ko\">택시를 불러요.</span> (I'm calling a taxi.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">기차</span>", back: "train. <span class=\"ko\">기차로 부산에 가요.</span> (I'm going to Busan by train.)" },
+    { pos: "noun", front: "Translate to Korean: \"airplane\"", back: "<span class=\"ko\">비행기</span>. <span class=\"ko\">비행기가 늦어요.</span> (The plane is late.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">배</span>", back: "boat/ship (also: stomach, pear). <span class=\"ko\">배를 타요.</span> (I take the boat.)" },
+    { pos: "noun", front: "Translate to Korean: \"bicycle\"", back: "<span class=\"ko\">자전거</span>. <span class=\"ko\">자전거를 타요.</span> (I ride a bicycle.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">오토바이</span>", back: "motorcycle. <span class=\"ko\">오토바이가 시끄러워요.</span> (The motorcycle is loud.)" },
+    { pos: "noun", front: "Translate to Korean: \"road\" / \"way\"", back: "<span class=\"ko\">길</span>. <span class=\"ko\">길을 잃었어요.</span> (I got lost.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">지도</span>", back: "map. <span class=\"ko\">지도를 봐요.</span> (I'm looking at the map.)" },
+    { pos: "noun", front: "Translate to Korean: \"traffic light\"", back: "<span class=\"ko\">신호등</span>. <span class=\"ko\">신호등이 빨개요.</span> (The light is red.)" },
+    { pos: "noun", front: "Translate to Korean: \"ticket\"", back: "<span class=\"ko\">표</span> (also <span class=\"ko\">티켓</span>). <span class=\"ko\">표를 샀어요.</span> (I bought a ticket.)" },
+
+    // === Work / business ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">일</span>", back: "work (also: day, matter). <span class=\"ko\">일이 많아요.</span> (I have a lot of work.)" },
+    { pos: "noun", front: "Translate to Korean: \"company\"", back: "<span class=\"ko\">회사</span>. <span class=\"ko\">회사에 가요.</span> (I'm going to the company.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">직업</span>", back: "occupation/job. <span class=\"ko\">직업이 뭐예요?</span> (What's your job?)" },
+    { pos: "noun", front: "Translate to Korean: \"boss\" / \"company president\"", back: "<span class=\"ko\">사장</span>. <span class=\"ko\">사장님이 바빠요.</span> (The boss is busy.)" },
+    { pos: "noun", front: "Translate to Korean: \"meeting\"", back: "<span class=\"ko\">회의</span>. <span class=\"ko\">회의가 길어요.</span> (The meeting is long.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">사무실</span>", back: "office. <span class=\"ko\">사무실이 조용해요.</span> (The office is quiet.)" },
+    { pos: "noun", front: "Translate to Korean: \"business trip\"", back: "<span class=\"ko\">출장</span>. <span class=\"ko\">출장을 가요.</span> (I'm going on a business trip.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">휴가</span>", back: "vacation/leave. <span class=\"ko\">휴가가 짧아요.</span> (My vacation is short.)" },
+    { pos: "noun", front: "Translate to Korean: \"money\"", back: "<span class=\"ko\">돈</span>. <span class=\"ko\">돈이 없어요.</span> (I don't have money.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">월급</span>", back: "monthly salary. <span class=\"ko\">월급을 받았어요.</span> (I got my paycheck.)" },
+    { pos: "noun", front: "Translate to Korean: \"monthly rent\"", back: "<span class=\"ko\">월세</span>. <span class=\"ko\">월세가 비싸요.</span> (The rent is expensive.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">가격</span>", back: "price. <span class=\"ko\">가격이 좋아요.</span> (The price is good.)" },
+    { pos: "noun", front: "Translate to Korean: \"credit card\"", back: "<span class=\"ko\">신용카드</span>. <span class=\"ko\">신용카드로 계산해요.</span> (I'll pay by credit card.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">영수증</span>", back: "receipt. <span class=\"ko\">영수증 주세요.</span> (Please give me a receipt.)" },
+    { pos: "noun", front: "Translate to Korean: \"the bill\" / \"calculation\"", back: "<span class=\"ko\">계산</span>. <span class=\"ko\">계산은 제가 할게요.</span> (I'll get the bill.)" },
+    // === School / study ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">공부</span>", back: "study/studying. <span class=\"ko\">공부가 어려워요.</span> (Studying is hard.)" },
+    { pos: "noun", front: "Translate to Korean: \"class\" (a class session)", back: "<span class=\"ko\">수업</span>. <span class=\"ko\">수업이 끝났어요.</span> (Class is over.)" },
+    { pos: "noun", front: "Translate to Korean: \"exam\" / \"test\"", back: "<span class=\"ko\">시험</span>. <span class=\"ko\">시험이 어려워요.</span> (The test is hard.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">숙제</span>", back: "homework. <span class=\"ko\">숙제를 했어요.</span> (I did my homework.)" },
+    { pos: "noun", front: "Translate to Korean: \"score\" (on a test)", back: "<span class=\"ko\">점수</span>. <span class=\"ko\">점수가 높아요.</span> (The score is high.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">성적</span>", back: "grades/academic record. <span class=\"ko\">성적이 좋아요.</span> (My grades are good.)" },
+    { pos: "noun", front: "Translate to Korean: \"book\"", back: "<span class=\"ko\">책</span>. <span class=\"ko\">책을 읽어요.</span> (I read a book.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">교과서</span>", back: "textbook. <span class=\"ko\">교과서를 가져왔어요.</span> (I brought the textbook.)" },
+    { pos: "noun", front: "Translate to Korean: \"notebook\"", back: "<span class=\"ko\">노트</span>. <span class=\"ko\">노트에 적어요.</span> (I write it in the notebook.)" },
+    { pos: "noun", front: "Translate to Korean: \"paper\"", back: "<span class=\"ko\">종이</span>. <span class=\"ko\">종이 한 장 주세요.</span> (Please give me one sheet of paper.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">사전</span>", back: "dictionary. <span class=\"ko\">사전을 찾아요.</span> (I look it up in the dictionary.)" },
+    { pos: "noun", front: "Translate to Korean: \"classroom\"", back: "<span class=\"ko\">교실</span>. <span class=\"ko\">교실이 넓어요.</span> (The classroom is spacious.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">방학</span>", back: "school vacation/break. <span class=\"ko\">방학이 시작됐어요.</span> (Vacation has started.)" },
+    { pos: "noun", front: "Translate to Korean: \"graduation\"", back: "<span class=\"ko\">졸업</span>. <span class=\"ko\">졸업을 축하해요.</span> (Congratulations on your graduation.)" },
+
+    // === Leisure / media ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">영화</span>", back: "movie. <span class=\"ko\">영화를 봤어요.</span> (I watched a movie.)" },
+    { pos: "noun", front: "Translate to Korean: \"drama\" (TV)", back: "<span class=\"ko\">드라마</span>. <span class=\"ko\">드라마가 슬퍼요.</span> (The drama is sad.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">음악</span>", back: "music. <span class=\"ko\">음악을 들어요.</span> (I'm listening to music.)" },
+    { pos: "noun", front: "Translate to Korean: \"song\"", back: "<span class=\"ko\">노래</span>. <span class=\"ko\">노래를 불러요.</span> (I sing a song.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">춤</span>", back: "dance. <span class=\"ko\">춤을 잘 춰요.</span> (I dance well.)" },
+    { pos: "noun", front: "Translate to Korean: \"exercise\" / \"sports\"", back: "<span class=\"ko\">운동</span>. <span class=\"ko\">운동을 해요.</span> (I exercise.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">게임</span>", back: "game. <span class=\"ko\">게임을 좋아해요.</span> (I like games.)" },
+    { pos: "noun", front: "Translate to Korean: \"newspaper\"", back: "<span class=\"ko\">신문</span>. <span class=\"ko\">아침에 신문을 읽어요.</span> (I read the newspaper in the morning.)" },
+    { pos: "noun", front: "Translate to Korean: \"photo\"", back: "<span class=\"ko\">사진</span>. <span class=\"ko\">사진을 찍어요.</span> (I'm taking a photo.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">그림</span>", back: "picture/drawing. <span class=\"ko\">그림을 그려요.</span> (I'm drawing a picture.)" },
+    { pos: "noun", front: "Translate to Korean: \"concert\"", back: "<span class=\"ko\">콘서트</span>. <span class=\"ko\">콘서트에 갔어요.</span> (I went to a concert.)" },
+    { pos: "noun", front: "Translate to Korean: \"travel\" / \"a trip\"", back: "<span class=\"ko\">여행</span>. <span class=\"ko\">여행을 가요.</span> (I'm going on a trip.)" },
+
+    // === Abstract — feeling / thought ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">사랑</span>", back: "love. <span class=\"ko\">사랑이 깊어요.</span> (The love is deep.)" },
+    { pos: "noun", front: "Translate to Korean: \"happiness\"", back: "<span class=\"ko\">행복</span>. <span class=\"ko\">행복을 빌어요.</span> (I wish you happiness.)" },
+    { pos: "noun", front: "Translate to Korean: \"worry\"", back: "<span class=\"ko\">걱정</span>. <span class=\"ko\">걱정하지 마세요.</span> (Don't worry.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">꿈</span>", back: "dream. <span class=\"ko\">꿈을 꿨어요.</span> (I had a dream.)" },
+    { pos: "noun", front: "Translate to Korean: \"hope\"", back: "<span class=\"ko\">희망</span>. <span class=\"ko\">희망이 있어요.</span> (There is hope.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">마음</span>", back: "heart/mind (the inner self, feelings). <span class=\"ko\">마음이 아파요.</span> (My heart hurts.)" },
+    { pos: "noun", front: "Translate to Korean: \"thought\" / \"thinking\"", back: "<span class=\"ko\">생각</span>. <span class=\"ko\">좋은 생각이에요.</span> (That's a good idea.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">생각 vs 마음</span>", back: "<span class=\"ko\">생각</span> = thought/idea (cognitive). <span class=\"ko\">마음</span> = heart/feelings (affective). <span class=\"ko\">마음에 들어요.</span> (I like it / it suits my heart.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">기억</span>", back: "memory (the faculty / a recollection). <span class=\"ko\">기억이 안 나요.</span> (I can't remember.)" },
+    { pos: "noun", front: "Translate to Korean: \"memory\" (a fond recollection)", back: "<span class=\"ko\">추억</span>. <span class=\"ko\">좋은 추억이에요.</span> (It's a nice memory.)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">기억 vs 추억</span>", back: "<span class=\"ko\">기억</span> = memory as faculty (recall). <span class=\"ko\">추억</span> = nostalgic memory (a treasured past moment)." },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">느낌</span>", back: "feeling/impression. <span class=\"ko\">느낌이 좋아요.</span> (It feels good.)" },
+    { pos: "noun", front: "Translate to Korean: \"opinion\"", back: "<span class=\"ko\">의견</span>. <span class=\"ko\">의견을 말해요.</span> (I'm sharing my opinion.)" },
+
+    // === Abstract — process / action ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">시간</span>", back: "time. <span class=\"ko\">시간이 없어요.</span> (I don't have time.)" },
+    { pos: "noun", front: "Translate to Korean: \"problem\" / \"question\"", back: "<span class=\"ko\">문제</span>. <span class=\"ko\">문제가 있어요.</span> (There's a problem.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">답</span>", back: "answer. <span class=\"ko\">답을 몰라요.</span> (I don't know the answer.)" },
+    { pos: "noun", front: "Translate to Korean: \"reason\"", back: "<span class=\"ko\">이유</span>. <span class=\"ko\">이유가 뭐예요?</span> (What's the reason?)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">방법</span>", back: "method/way. <span class=\"ko\">좋은 방법이 있어요.</span> (There's a good method.)" },
+    { pos: "noun", front: "Translate to Korean: \"result\"", back: "<span class=\"ko\">결과</span>. <span class=\"ko\">결과가 나왔어요.</span> (The results are out.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">시작</span>", back: "the start/beginning. <span class=\"ko\">시작이 좋아요.</span> (It's a good start.)" },
+    { pos: "noun", front: "Translate to Korean: \"the end\"", back: "<span class=\"ko\">끝</span>. <span class=\"ko\">드디어 끝이에요.</span> (Finally, it's the end.)" },
+    { pos: "noun", front: "Translate to Korean: \"color\"", back: "<span class=\"ko\">색깔</span>. <span class=\"ko\">색깔이 밝아요.</span> (The color is bright.)" },
+    { pos: "noun", front: "Translate to Korean: \"kind\" / \"type\"", back: "<span class=\"ko\">종류</span>. <span class=\"ko\">종류가 많아요.</span> (There are many kinds.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">차이</span>", back: "difference. <span class=\"ko\">차이가 커요.</span> (The difference is big.)" },
+
+    // === Communication ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">말</span>", back: "speech/words/language. <span class=\"ko\">말이 빨라요.</span> (You speak fast.)" },
+    { pos: "noun", front: "Translate to Korean: \"story\" / \"talk\"", back: "<span class=\"ko\">이야기</span>. <span class=\"ko\">이야기를 들어요.</span> (I'm listening to the story.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">편지</span>", back: "letter (written). <span class=\"ko\">편지를 썼어요.</span> (I wrote a letter.)" },
+    { pos: "noun", front: "Translate to Korean: \"email\"", back: "<span class=\"ko\">이메일</span>. <span class=\"ko\">이메일을 보냈어요.</span> (I sent an email.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">문자</span>", back: "text message (also: written character). <span class=\"ko\">문자 보낼게요.</span> (I'll text you.)" },
+    { pos: "noun", front: "Translate to Korean: \"phone\" / \"a phone call\"", back: "<span class=\"ko\">전화</span>. <span class=\"ko\">전화를 받아요.</span> (I'm answering the phone.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">약속</span>", back: "promise/appointment. <span class=\"ko\">약속이 있어요.</span> (I have an appointment.)" },
+    { pos: "noun", front: "Translate to Korean: \"contact\" / \"getting in touch\"", back: "<span class=\"ko\">연락</span>. <span class=\"ko\">연락 주세요.</span> (Please contact me.)" },
+    { pos: "noun", front: "Translate to Korean: \"reply\"", back: "<span class=\"ko\">답장</span>. <span class=\"ko\">답장이 늦었어요.</span> (My reply was late.)" },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">소식</span>", back: "news (personal updates). <span class=\"ko\">좋은 소식이에요.</span> (It's good news.)" },
+    // === Numbers / quantity (general nouns) ===
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">숫자</span>", back: "number/digit. <span class=\"ko\">숫자가 커요.</span> (The number is big.)" },
+    { pos: "noun", front: "Translate to Korean: \"phone number\" / \"a number in a series\"", back: "<span class=\"ko\">번호</span>. <span class=\"ko\">번호가 뭐예요?</span> (What's the number?)" },
+    { pos: "noun", front: "Distinguish: <span class=\"ko\">숫자 vs 번호</span>", back: "<span class=\"ko\">숫자</span> = a digit/numeral (math). <span class=\"ko\">번호</span> = an identifying number (phone, room, ID)." },
+    { pos: "noun", front: "Translate to English: <span class=\"ko\">양</span>", back: "quantity/amount. <span class=\"ko\">양이 많아요.</span> (The amount is large.)" },
+    { pos: "noun", front: "Translate to Korean: \"degree\" / \"extent\"", back: "<span class=\"ko\">정도</span>. <span class=\"ko\">그 정도면 돼요.</span> (That much is enough.)" },
+
+    // ===== Daily routine =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">먹다</span>", back: "to eat. Polite present: <span class=\"ko\">먹어요</span>. <span class=\"ko\">밥을 먹어요.</span> (I'm eating rice.)" },
+    { pos: "verb", front: "Translate to Korean: \"to drink\"", back: "<span class=\"ko\">마시다</span>. Polite present: <span class=\"ko\">마셔요</span>. <span class=\"ko\">물을 마셔요.</span> (I'm drinking water.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">자다</span>", back: "to sleep. Polite present: <span class=\"ko\">자요</span>. <span class=\"ko\">일찍 자요.</span> (I sleep early.)" },
+    { pos: "verb", front: "Translate to Korean: \"to wake up / to get up\"", back: "<span class=\"ko\">일어나다</span>. Polite present: <span class=\"ko\">일어나요</span>. <span class=\"ko\">일곱 시에 일어나요.</span> (I wake up at seven.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">씻다</span>", back: "to wash. Polite present: <span class=\"ko\">씻어요</span>. <span class=\"ko\">손을 씻어요.</span> (I wash my hands.)" },
+    { pos: "verb", front: "Translate to Korean: \"to put on / to wear (clothes)\"", back: "<span class=\"ko\">입다</span>. Polite present: <span class=\"ko\">입어요</span>. <span class=\"ko\">외투를 입어요.</span> (I put on a coat.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">벗다</span>", back: "to take off (clothes/shoes). Polite present: <span class=\"ko\">벗어요</span>. <span class=\"ko\">신발을 벗어요.</span> (I take off my shoes.)" },
+    { pos: "verb", front: "Translate to Korean: \"to put on makeup\"", back: "<span class=\"ko\">화장하다</span>. Polite present: <span class=\"ko\">화장해요</span>. <span class=\"ko\">매일 화장해요.</span> (I put on makeup every day.)" },
+    { pos: "verb", front: "Conjugate: <span class=\"ko\">먹다</span> in polite present", back: "<span class=\"ko\">먹어요</span> — to eat. <span class=\"ko\">아침을 먹어요.</span> (I eat breakfast.)" },
+
+    // ===== Motion (basic) =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">가다</span>", back: "to go. Polite present: <span class=\"ko\">가요</span>. <span class=\"ko\">학교에 가요.</span> (I go to school.)" },
+    { pos: "verb", front: "Translate to Korean: \"to come\"", back: "<span class=\"ko\">오다</span>. Polite present: <span class=\"ko\">와요</span>. <span class=\"ko\">친구가 와요.</span> (My friend is coming.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">다니다</span>", back: "to attend / to commute (regularly). Polite present: <span class=\"ko\">다녀요</span>. <span class=\"ko\">회사에 다녀요.</span> (I work at / commute to a company.)" },
+    { pos: "verb", front: "Translate to Korean: \"to walk\"", back: "<span class=\"ko\">걷다</span>. Polite present: <span class=\"ko\">걸어요</span> (ㄷ-irregular). <span class=\"ko\">공원을 걸어요.</span> (I walk in the park.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">달리다</span>", back: "to run. Polite present: <span class=\"ko\">달려요</span>. <span class=\"ko\">빠르게 달려요.</span> (I run fast.)" },
+    { pos: "verb", front: "Translate to Korean: \"to run / to jump\"", back: "<span class=\"ko\">뛰다</span>. Polite present: <span class=\"ko\">뛰어요</span>. <span class=\"ko\">아이가 뛰어요.</span> (The child is running.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">앉다</span>", back: "to sit. Polite present: <span class=\"ko\">앉아요</span>. <span class=\"ko\">의자에 앉아요.</span> (I sit on the chair.)" },
+    { pos: "verb", front: "Translate to Korean: \"to stand\"", back: "<span class=\"ko\">서다</span>. Polite present: <span class=\"ko\">서요</span>. <span class=\"ko\">줄을 서요.</span> (I stand in line.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">눕다</span>", back: "to lie down. Polite present: <span class=\"ko\">누워요</span> (ㅂ-irregular). <span class=\"ko\">침대에 누워요.</span> (I lie down on the bed.)" },
+    { pos: "verb", front: "Translate to Korean: \"to stand up\"", back: "<span class=\"ko\">일어서다</span>. Polite present: <span class=\"ko\">일어서요</span>. <span class=\"ko\">자리에서 일어서요.</span> (I stand up from my seat.)" },
+
+    // ===== Motion (directional) =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">들어가다</span>", back: "to go in / to enter. Polite present: <span class=\"ko\">들어가요</span>. <span class=\"ko\">방에 들어가요.</span> (I go into the room.)" },
+    { pos: "verb", front: "Translate to Korean: \"to come out\"", back: "<span class=\"ko\">나오다</span>. Polite present: <span class=\"ko\">나와요</span>. <span class=\"ko\">집에서 나와요.</span> (I come out of the house.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">올라가다</span>", back: "to go up / to climb. Polite present: <span class=\"ko\">올라가요</span>. <span class=\"ko\">산에 올라가요.</span> (I go up the mountain.)" },
+    { pos: "verb", front: "Translate to Korean: \"to go down\"", back: "<span class=\"ko\">내려가다</span>. Polite present: <span class=\"ko\">내려가요</span>. <span class=\"ko\">계단을 내려가요.</span> (I go down the stairs.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">떨어지다</span>", back: "to fall / to drop. Polite present: <span class=\"ko\">떨어져요</span>. <span class=\"ko\">잎이 떨어져요.</span> (Leaves are falling.)" },
+    { pos: "verb", front: "Translate to Korean: \"to arrive\"", back: "<span class=\"ko\">도착하다</span>. Polite present: <span class=\"ko\">도착해요</span>. <span class=\"ko\">역에 도착해요.</span> (I arrive at the station.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">출발하다</span>", back: "to depart / to set off. Polite present: <span class=\"ko\">출발해요</span>. <span class=\"ko\">곧 출발해요.</span> (I'll leave soon.)" },
+    { pos: "verb", front: "Translate to Korean: \"to return / to go back\"", back: "<span class=\"ko\">돌아가다</span>. Polite present: <span class=\"ko\">돌아가요</span>. <span class=\"ko\">집에 돌아가요.</span> (I'm going back home.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">지나가다</span>", back: "to pass by / to go past. Polite present: <span class=\"ko\">지나가요</span>. <span class=\"ko\">차가 지나가요.</span> (A car is passing by.)" },
+    { pos: "verb", front: "Translate to Korean: \"to leave (a place)\"", back: "<span class=\"ko\">떠나다</span>. Polite present: <span class=\"ko\">떠나요</span>. <span class=\"ko\">서울을 떠나요.</span> (I leave Seoul.)" },
+
+    // ===== Vehicle/movement =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">타다</span>", back: "to ride / to board. Polite present: <span class=\"ko\">타요</span>. <span class=\"ko\">버스를 타요.</span> (I take the bus.)" },
+    { pos: "verb", front: "Translate to Korean: \"to get off (a vehicle)\"", back: "<span class=\"ko\">내리다</span>. Polite present: <span class=\"ko\">내려요</span>. <span class=\"ko\">다음 역에서 내려요.</span> (I get off at the next station.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">운전하다</span>", back: "to drive. Polite present: <span class=\"ko\">운전해요</span>. <span class=\"ko\">차를 운전해요.</span> (I drive a car.)" },
+
+    // ===== Communication =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">말하다</span>", back: "to speak / to say. Polite present: <span class=\"ko\">말해요</span>. <span class=\"ko\">천천히 말해요.</span> (I speak slowly.)" },
+    { pos: "verb", front: "Translate to Korean: \"to talk / to chat\"", back: "<span class=\"ko\">이야기하다</span>. Polite present: <span class=\"ko\">이야기해요</span>. <span class=\"ko\">친구와 이야기해요.</span> (I chat with a friend.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">듣다</span>", back: "to listen / to hear. Polite present: <span class=\"ko\">들어요</span> (ㄷ-irregular). <span class=\"ko\">음악을 들어요.</span> (I listen to music.)" },
+    { pos: "verb", front: "Translate to Korean: \"to ask (a question)\"", back: "<span class=\"ko\">묻다</span>. Polite present: <span class=\"ko\">물어요</span> (ㄷ-irregular). <span class=\"ko\">길을 물어요.</span> (I ask for directions.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">대답하다</span>", back: "to answer / to reply. Polite present: <span class=\"ko\">대답해요</span>. <span class=\"ko\">질문에 대답해요.</span> (I answer the question.)" },
+    { pos: "verb", front: "Translate to Korean: \"to call (someone's name) / to sing\"", back: "<span class=\"ko\">부르다</span>. Polite present: <span class=\"ko\">불러요</span> (르-irregular). <span class=\"ko\">이름을 불러요.</span> (I call out the name.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">외치다</span>", back: "to shout / to yell. Polite present: <span class=\"ko\">외쳐요</span>. <span class=\"ko\">크게 외쳐요.</span> (I shout loudly.)" },
+    { pos: "verb", front: "Translate to Korean: \"to greet\"", back: "<span class=\"ko\">인사하다</span>. Polite present: <span class=\"ko\">인사해요</span>. <span class=\"ko\">선생님께 인사해요.</span> (I greet the teacher.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">약속하다</span>", back: "to promise / to make an appointment. Polite present: <span class=\"ko\">약속해요</span>. <span class=\"ko\">친구와 약속해요.</span> (I make plans with a friend.)" },
+    { pos: "verb", front: "Translate to Korean: \"to phone / to call on the phone\"", back: "<span class=\"ko\">전화하다</span>. Polite present: <span class=\"ko\">전화해요</span>. <span class=\"ko\">엄마한테 전화해요.</span> (I call mom.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">연락하다</span>", back: "to contact / to get in touch. Polite present: <span class=\"ko\">연락해요</span>. <span class=\"ko\">자주 연락해요.</span> (We keep in touch often.)" },
+    { pos: "verb", front: "Translate to Korean: \"to explain\"", back: "<span class=\"ko\">설명하다</span>. Polite present: <span class=\"ko\">설명해요</span>. <span class=\"ko\">규칙을 설명해요.</span> (I explain the rules.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">소개하다</span>", back: "to introduce. Polite present: <span class=\"ko\">소개해요</span>. <span class=\"ko\">친구를 소개해요.</span> (I introduce my friend.)" },
+    { pos: "verb", front: "Translate to Korean: \"to brag / to show off\"", back: "<span class=\"ko\">자랑하다</span>. Polite present: <span class=\"ko\">자랑해요</span>. <span class=\"ko\">아들을 자랑해요.</span> (She brags about her son.)" },
+
+    // ===== Mental / emotion =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">생각하다</span>", back: "to think. Polite present: <span class=\"ko\">생각해요</span>. <span class=\"ko\">자주 생각해요.</span> (I think about it often.)" },
+    { pos: "verb", front: "Translate to Korean: \"to know\"", back: "<span class=\"ko\">알다</span>. Polite present: <span class=\"ko\">알아요</span> (ㄹ-stem). <span class=\"ko\">답을 알아요.</span> (I know the answer.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">모르다</span>", back: "to not know. Polite present: <span class=\"ko\">몰라요</span> (르-irregular). <span class=\"ko\">잘 몰라요.</span> (I don't really know.)" },
+    { pos: "verb", front: "Distinguish: <span class=\"ko\">알다 vs 모르다</span>", back: "<span class=\"ko\">알다</span> = to know (<span class=\"ko\">알아요</span>); <span class=\"ko\">모르다</span> = to not know (<span class=\"ko\">몰라요</span>, 르-irregular). They are the standard antonym pair." },
+    { pos: "verb", front: "Translate to Korean: \"to remember\"", back: "<span class=\"ko\">기억하다</span>. Polite present: <span class=\"ko\">기억해요</span>. <span class=\"ko\">이름을 기억해요.</span> (I remember the name.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">잊다</span>", back: "to forget. Polite present: <span class=\"ko\">잊어요</span>. Often <span class=\"ko\">잊어버리다</span> (forget completely). <span class=\"ko\">약속을 잊어요.</span> (I forget the promise.)" },
+    { pos: "verb", front: "Translate to Korean: \"to feel\"", back: "<span class=\"ko\">느끼다</span>. Polite present: <span class=\"ko\">느껴요</span>. <span class=\"ko\">행복을 느껴요.</span> (I feel happiness.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">좋아하다</span>", back: "to like. Polite present: <span class=\"ko\">좋아해요</span>. <span class=\"ko\">커피를 좋아해요.</span> (I like coffee.)" },
+    { pos: "verb", front: "Translate to Korean: \"to dislike / to hate\"", back: "<span class=\"ko\">싫어하다</span>. Polite present: <span class=\"ko\">싫어해요</span>. <span class=\"ko\">비를 싫어해요.</span> (I dislike the rain.)" },
+    { pos: "verb", front: "Distinguish: <span class=\"ko\">좋아하다 vs 싫어하다</span>", back: "<span class=\"ko\">좋아하다</span> = to like (<span class=\"ko\">좋아해요</span>); <span class=\"ko\">싫어하다</span> = to dislike (<span class=\"ko\">싫어해요</span>). Both take a direct object with <span class=\"ko\">을/를</span>." },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">사랑하다</span>", back: "to love. Polite present: <span class=\"ko\">사랑해요</span>. <span class=\"ko\">가족을 사랑해요.</span> (I love my family.)" },
+    { pos: "verb", front: "Translate to Korean: \"to hate / to detest (a person)\"", back: "<span class=\"ko\">미워하다</span>. Polite present: <span class=\"ko\">미워해요</span>. <span class=\"ko\">아무도 미워하지 않아요.</span> (I don't hate anyone.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">원하다</span>", back: "to want. Polite present: <span class=\"ko\">원해요</span>. <span class=\"ko\">평화를 원해요.</span> (I want peace.)" },
+    { pos: "verb", front: "Translate to Korean: \"to hope / to wish\"", back: "<span class=\"ko\">바라다</span>. Polite present: <span class=\"ko\">바라요</span>. <span class=\"ko\">행복을 바라요.</span> (I wish for happiness.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">기대하다</span>", back: "to expect / to look forward to. Polite present: <span class=\"ko\">기대해요</span>. <span class=\"ko\">여행을 기대해요.</span> (I look forward to the trip.)" },
+    { pos: "verb", front: "Translate to Korean: \"to worry\"", back: "<span class=\"ko\">걱정하다</span>. Polite present: <span class=\"ko\">걱정해요</span>. <span class=\"ko\">시험을 걱정해요.</span> (I worry about the exam.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">즐기다</span>", back: "to enjoy. Polite present: <span class=\"ko\">즐겨요</span>. <span class=\"ko\">주말을 즐겨요.</span> (I enjoy the weekend.)" },
+    { pos: "verb", front: "Translate to Korean: \"to get angry\"", back: "<span class=\"ko\">화내다</span>. Polite present: <span class=\"ko\">화내요</span>. <span class=\"ko\">자주 화내요.</span> (He often gets angry.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">웃다</span>", back: "to laugh / to smile. Polite present: <span class=\"ko\">웃어요</span>. <span class=\"ko\">크게 웃어요.</span> (I laugh loudly.)" },
+    { pos: "verb", front: "Translate to Korean: \"to cry\"", back: "<span class=\"ko\">울다</span>. Polite present: <span class=\"ko\">울어요</span> (ㄹ-stem). <span class=\"ko\">아기가 울어요.</span> (The baby is crying.)" },
+    { pos: "verb", front: "Conjugate: <span class=\"ko\">듣다</span> in polite present", back: "<span class=\"ko\">들어요</span> — to listen (ㄷ-irregular: ㄷ→ㄹ before vowel). <span class=\"ko\">라디오를 들어요.</span> (I listen to the radio.)" },
+
+    // ===== Transactional =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">사다</span>", back: "to buy. Polite present: <span class=\"ko\">사요</span>. <span class=\"ko\">빵을 사요.</span> (I buy bread.)" },
+    { pos: "verb", front: "Translate to Korean: \"to sell\"", back: "<span class=\"ko\">팔다</span>. Polite present: <span class=\"ko\">팔아요</span> (ㄹ-stem). <span class=\"ko\">꽃을 팔아요.</span> (She sells flowers.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">주다</span>", back: "to give. Polite present: <span class=\"ko\">줘요</span>. <span class=\"ko\">선물을 줘요.</span> (I give a gift.)" },
+    { pos: "verb", front: "Translate to Korean: \"to receive\"", back: "<span class=\"ko\">받다</span>. Polite present: <span class=\"ko\">받아요</span>. <span class=\"ko\">편지를 받아요.</span> (I receive a letter.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">빌리다</span>", back: "to borrow. Polite present: <span class=\"ko\">빌려요</span>. <span class=\"ko\">책을 빌려요.</span> (I borrow a book.)" },
+    { pos: "verb", front: "Translate to Korean: \"to lend\"", back: "<span class=\"ko\">빌려주다</span>. Polite present: <span class=\"ko\">빌려줘요</span>. <span class=\"ko\">돈을 빌려줘요.</span> (I lend money.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">갚다</span>", back: "to pay back / to repay. Polite present: <span class=\"ko\">갚아요</span>. <span class=\"ko\">빚을 갚아요.</span> (I pay back the debt.)" },
+    { pos: "verb", front: "Translate to Korean: \"to change / to exchange\"", back: "<span class=\"ko\">바꾸다</span>. Polite present: <span class=\"ko\">바꿔요</span>. <span class=\"ko\">돈을 바꿔요.</span> (I exchange money.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">가지다</span>", back: "to have / to possess. Polite present: <span class=\"ko\">가져요</span>. <span class=\"ko\">꿈을 가져요.</span> (I have a dream.)" },
+    { pos: "verb", front: "Translate to Korean: \"to hold / to lift\"", back: "<span class=\"ko\">들다</span>. Polite present: <span class=\"ko\">들어요</span> (ㄹ-stem). <span class=\"ko\">가방을 들어요.</span> (I hold a bag.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">놓다</span>", back: "to put down / to place. Polite present: <span class=\"ko\">놓아요</span> (often <span class=\"ko\">놔요</span>). <span class=\"ko\">책을 놓아요.</span> (I put the book down.)" },
+    { pos: "verb", front: "Translate to Korean: \"to send\"", back: "<span class=\"ko\">보내다</span>. Polite present: <span class=\"ko\">보내요</span>. <span class=\"ko\">편지를 보내요.</span> (I send a letter.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">가져오다</span>", back: "to bring (toward speaker). Polite present: <span class=\"ko\">가져와요</span>. <span class=\"ko\">우산을 가져와요.</span> (I'm bringing an umbrella.)" },
+    { pos: "verb", front: "Translate to Korean: \"to take (away from speaker)\"", back: "<span class=\"ko\">가져가다</span>. Polite present: <span class=\"ko\">가져가요</span>. <span class=\"ko\">도시락을 가져가요.</span> (I take a lunchbox with me.)" },
+
+    // ===== Learning / work =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">공부하다</span>", back: "to study. Polite present: <span class=\"ko\">공부해요</span>. <span class=\"ko\">한국어를 공부해요.</span> (I study Korean.)" },
+    { pos: "verb", front: "Translate to Korean: \"to work\"", back: "<span class=\"ko\">일하다</span>. Polite present: <span class=\"ko\">일해요</span>. <span class=\"ko\">늦게까지 일해요.</span> (I work until late.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">가르치다</span>", back: "to teach. Polite present: <span class=\"ko\">가르쳐요</span>. <span class=\"ko\">영어를 가르쳐요.</span> (I teach English.)" },
+    { pos: "verb", front: "Translate to Korean: \"to learn\"", back: "<span class=\"ko\">배우다</span>. Polite present: <span class=\"ko\">배워요</span>. <span class=\"ko\">요리를 배워요.</span> (I learn cooking.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">읽다</span>", back: "to read. Polite present: <span class=\"ko\">읽어요</span>. <span class=\"ko\">책을 읽어요.</span> (I read a book.)" },
+    { pos: "verb", front: "Translate to Korean: \"to write\"", back: "<span class=\"ko\">쓰다</span>. Polite present: <span class=\"ko\">써요</span> (으-drop). <span class=\"ko\">편지를 써요.</span> (I write a letter.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">보다</span>", back: "to see / to watch. Polite present: <span class=\"ko\">봐요</span>. <span class=\"ko\">영화를 봐요.</span> (I watch a movie.)" },
+    { pos: "verb", front: "Translate to Korean: \"to meet\"", back: "<span class=\"ko\">만나다</span>. Polite present: <span class=\"ko\">만나요</span>. <span class=\"ko\">친구를 만나요.</span> (I meet a friend.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">도와주다</span>", back: "to help (someone). Polite present: <span class=\"ko\">도와줘요</span>. <span class=\"ko\">친구를 도와줘요.</span> (I help my friend.)" },
+    { pos: "verb", front: "Translate to Korean: \"to start / to begin\"", back: "<span class=\"ko\">시작하다</span>. Polite present: <span class=\"ko\">시작해요</span>. <span class=\"ko\">수업을 시작해요.</span> (I start the class.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">끝나다</span>", back: "to end / to be finished (intransitive). Polite present: <span class=\"ko\">끝나요</span>. <span class=\"ko\">수업이 끝나요.</span> (Class ends.)" },
+    { pos: "verb", front: "Translate to Korean: \"to finish (something) — transitive\"", back: "<span class=\"ko\">끝내다</span>. Polite present: <span class=\"ko\">끝내요</span>. <span class=\"ko\">일을 끝내요.</span> (I finish the work.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">찾다</span>", back: "to look for / to find. Polite present: <span class=\"ko\">찾아요</span>. <span class=\"ko\">열쇠를 찾아요.</span> (I look for the key.)" },
+    { pos: "verb", front: "Translate to Korean: \"to solve\"", back: "<span class=\"ko\">풀다</span>. Polite present: <span class=\"ko\">풀어요</span> (ㄹ-stem). <span class=\"ko\">문제를 풀어요.</span> (I solve the problem.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">외우다</span>", back: "to memorize. Polite present: <span class=\"ko\">외워요</span>. <span class=\"ko\">단어를 외워요.</span> (I memorize words.)" },
+    { pos: "verb", front: "Translate to Korean: \"to practice\"", back: "<span class=\"ko\">연습하다</span>. Polite present: <span class=\"ko\">연습해요</span>. <span class=\"ko\">매일 연습해요.</span> (I practice every day.)" },
+    { pos: "verb", front: "Conjugate: <span class=\"ko\">쓰다</span> in polite present", back: "<span class=\"ko\">써요</span> — to write (으-drop: stem ㅡ drops before vowel ending). <span class=\"ko\">일기를 써요.</span> (I write a diary.)" },
+
+    // ===== Cooking / home =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">만들다</span>", back: "to make. Polite present: <span class=\"ko\">만들어요</span> (ㄹ-stem). <span class=\"ko\">저녁을 만들어요.</span> (I make dinner.)" },
+    { pos: "verb", front: "Translate to Korean: \"to boil (a liquid/stew)\"", back: "<span class=\"ko\">끓이다</span>. Polite present: <span class=\"ko\">끓여요</span>. <span class=\"ko\">찌개를 끓여요.</span> (I boil/cook stew.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">굽다</span>", back: "to grill / to bake / to roast. Polite present: <span class=\"ko\">구워요</span> (ㅂ-irregular). <span class=\"ko\">고기를 구워요.</span> (I grill meat.)" },
+    { pos: "verb", front: "Translate to Korean: \"to stir-fry\"", back: "<span class=\"ko\">볶다</span>. Polite present: <span class=\"ko\">볶아요</span>. <span class=\"ko\">야채를 볶아요.</span> (I stir-fry vegetables.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">자르다</span>", back: "to cut. Polite present: <span class=\"ko\">잘라요</span> (르-irregular). <span class=\"ko\">빵을 잘라요.</span> (I cut the bread.)" },
+    { pos: "verb", front: "Translate to Korean: \"to wipe / to polish\"", back: "<span class=\"ko\">닦다</span>. Polite present: <span class=\"ko\">닦아요</span>. <span class=\"ko\">이를 닦아요.</span> (I brush my teeth.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">청소하다</span>", back: "to clean. Polite present: <span class=\"ko\">청소해요</span>. <span class=\"ko\">방을 청소해요.</span> (I clean the room.)" },
+    { pos: "verb", front: "Translate to Korean: \"to do laundry\"", back: "<span class=\"ko\">빨래하다</span>. Polite present: <span class=\"ko\">빨래해요</span>. <span class=\"ko\">주말에 빨래해요.</span> (I do laundry on weekends.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">정리하다</span>", back: "to tidy up / to organize. Polite present: <span class=\"ko\">정리해요</span>. <span class=\"ko\">책상을 정리해요.</span> (I tidy up the desk.)" },
+
+    // ===== Open/close & state changes =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">열다</span>", back: "to open. Polite present: <span class=\"ko\">열어요</span> (ㄹ-stem). <span class=\"ko\">문을 열어요.</span> (I open the door.)" },
+    { pos: "verb", front: "Translate to Korean: \"to close / to shut\"", back: "<span class=\"ko\">닫다</span>. Polite present: <span class=\"ko\">닫아요</span>. <span class=\"ko\">창문을 닫아요.</span> (I close the window.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">켜다</span>", back: "to turn on (lights/devices). Polite present: <span class=\"ko\">켜요</span>. <span class=\"ko\">불을 켜요.</span> (I turn on the light.)" },
+    { pos: "verb", front: "Translate to Korean: \"to turn off\"", back: "<span class=\"ko\">끄다</span>. Polite present: <span class=\"ko\">꺼요</span> (으-drop). <span class=\"ko\">텔레비전을 꺼요.</span> (I turn off the TV.)" },
+    { pos: "verb", front: "Distinguish: <span class=\"ko\">켜다 vs 끄다</span>", back: "<span class=\"ko\">켜다</span> = turn on (<span class=\"ko\">켜요</span>); <span class=\"ko\">끄다</span> = turn off (<span class=\"ko\">꺼요</span>, 으-drop). Used for lights, TVs, phones, fire." },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">시작되다</span>", back: "to begin / to start (intransitive). Polite present: <span class=\"ko\">시작돼요</span>. <span class=\"ko\">영화가 시작돼요.</span> (The movie starts.)" },
+    { pos: "verb", front: "Translate to Korean: \"to stop (raining etc.) / to cease\"", back: "<span class=\"ko\">그치다</span>. Polite present: <span class=\"ko\">그쳐요</span>. <span class=\"ko\">비가 그쳐요.</span> (The rain stops.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">멈추다</span>", back: "to stop / to halt. Polite present: <span class=\"ko\">멈춰요</span>. <span class=\"ko\">차가 멈춰요.</span> (The car stops.)" },
+    { pos: "verb", front: "Translate to Korean: \"to change / to be transformed\"", back: "<span class=\"ko\">변하다</span>. Polite present: <span class=\"ko\">변해요</span>. <span class=\"ko\">계절이 변해요.</span> (The seasons change.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">바뀌다</span>", back: "to be changed / to switch (intransitive). Polite present: <span class=\"ko\">바뀌어요</span>. <span class=\"ko\">날씨가 바뀌어요.</span> (The weather changes.)" },
+
+    // ===== Life events =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">살다</span>", back: "to live / to reside. Polite present: <span class=\"ko\">살아요</span> (ㄹ-stem). <span class=\"ko\">서울에 살아요.</span> (I live in Seoul.)" },
+    { pos: "verb", front: "Translate to Korean: \"to die\"", back: "<span class=\"ko\">죽다</span>. Polite present: <span class=\"ko\">죽어요</span>. <span class=\"ko\">꽃이 죽어요.</span> (The flower is dying.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">태어나다</span>", back: "to be born. Polite present: <span class=\"ko\">태어나요</span>. <span class=\"ko\">서울에서 태어나요.</span> (I was born in Seoul.)" },
+    { pos: "verb", front: "Translate to Korean: \"to get married\"", back: "<span class=\"ko\">결혼하다</span>. Polite present: <span class=\"ko\">결혼해요</span>. <span class=\"ko\">내년에 결혼해요.</span> (I'm getting married next year.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">이혼하다</span>", back: "to divorce. Polite present: <span class=\"ko\">이혼해요</span>. <span class=\"ko\">두 사람이 이혼해요.</span> (The two are getting divorced.)" },
+    { pos: "verb", front: "Translate to Korean: \"to move (residence)\"", back: "<span class=\"ko\">이사하다</span>. Polite present: <span class=\"ko\">이사해요</span>. <span class=\"ko\">다음 달에 이사해요.</span> (I'm moving next month.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">헤어지다</span>", back: "to break up / to part ways. Polite present: <span class=\"ko\">헤어져요</span>. <span class=\"ko\">친구와 헤어져요.</span> (I part with my friend.)" },
+
+    // ===== Helping / health / states =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">쉬다</span>", back: "to rest. Polite present: <span class=\"ko\">쉬어요</span>. <span class=\"ko\">집에서 쉬어요.</span> (I rest at home.)" },
+    { pos: "verb", front: "Translate to Korean: \"to grab / to catch / to hold\"", back: "<span class=\"ko\">잡다</span>. Polite present: <span class=\"ko\">잡아요</span>. <span class=\"ko\">손을 잡아요.</span> (I hold a hand.)" },
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">잃어버리다</span>", back: "to lose (something). Polite present: <span class=\"ko\">잃어버려요</span>. <span class=\"ko\">지갑을 잃어버려요.</span> (I lose my wallet.)" },
+    { pos: "verb", front: "Translate to Korean: \"to find (and discover)\"", back: "<span class=\"ko\">찾아내다</span>. Polite present: <span class=\"ko\">찾아내요</span>. <span class=\"ko\">답을 찾아내요.</span> (I figure out the answer.)" },
+
+    // ===== Sensory =====
+    { pos: "verb", front: "Translate to English: <span class=\"ko\">냄새맡다</span>", back: "to smell (something). Polite present: <span class=\"ko\">냄새맡아요</span>. <span class=\"ko\">꽃 냄새를 맡아요.</span> (I smell the flowers.)" },
+    { pos: "verb", front: "Translate to Korean: \"to taste (something)\"", back: "<span class=\"ko\">맛보다</span>. Polite present: <span class=\"ko\">맛봐요</span>. <span class=\"ko\">국을 맛봐요.</span> (I taste the soup.)" },
+    { pos: "verb", front: "Conjugate: <span class=\"ko\">굽다</span> in polite present", back: "<span class=\"ko\">구워요</span> — to grill/bake (ㅂ-irregular: ㅂ→우 before vowel). <span class=\"ko\">생선을 구워요.</span> (I grill fish.)" },
+
+    // === Size / shape ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">크다</span>", back: "to be big / large. Polite present: <span class=\"ko\">커요</span> (으-drop). <span class=\"ko\">집이 커요.</span> (The house is big.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be small\"", back: "<span class=\"ko\">작다</span>. Polite present: <span class=\"ko\">작아요</span>. <span class=\"ko\">방이 작아요.</span> (The room is small.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">길다</span>", back: "to be long. Polite present: <span class=\"ko\">길어요</span> (ㄹ-stem, no drop here). <span class=\"ko\">머리가 길어요.</span> (The hair is long.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be short (length)\"", back: "<span class=\"ko\">짧다</span>. Polite present: <span class=\"ko\">짧아요</span>. <span class=\"ko\">치마가 짧아요.</span> (The skirt is short.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">높다</span>", back: "to be high / tall (of things). Polite present: <span class=\"ko\">높아요</span>. <span class=\"ko\">산이 높아요.</span> (The mountain is high.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be low\"", back: "<span class=\"ko\">낮다</span>. Polite present: <span class=\"ko\">낮아요</span>. <span class=\"ko\">천장이 낮아요.</span> (The ceiling is low.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">넓다</span>", back: "to be wide / spacious. Polite present: <span class=\"ko\">넓어요</span>. <span class=\"ko\">방이 넓어요.</span> (The room is spacious.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be narrow\"", back: "<span class=\"ko\">좁다</span>. Polite present: <span class=\"ko\">좁아요</span>. <span class=\"ko\">길이 좁아요.</span> (The road is narrow.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">두껍다</span> in polite present", back: "to be thick. <span class=\"ko\">두꺼워요</span> (ㅂ-irregular: ㅂ → 우). <span class=\"ko\">책이 두꺼워요.</span> (The book is thick.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be thin (flat objects)\"", back: "<span class=\"ko\">얇다</span>. Polite present: <span class=\"ko\">얇아요</span>. <span class=\"ko\">종이가 얇아요.</span> (The paper is thin.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">무겁다</span>", back: "to be heavy. Polite present: <span class=\"ko\">무거워요</span> (ㅂ-irregular). <span class=\"ko\">가방이 무거워요.</span> (The bag is heavy.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be light (in weight)\"", back: "<span class=\"ko\">가볍다</span>. Polite present: <span class=\"ko\">가벼워요</span> (ㅂ-irregular). <span class=\"ko\">짐이 가벼워요.</span> (The luggage is light.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">둥글다</span>", back: "to be round. Polite present: <span class=\"ko\">둥글어요</span> (ㄹ-stem). <span class=\"ko\">달이 둥글어요.</span> (The moon is round.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be square / square-shaped\"", back: "<span class=\"ko\">네모나다</span>. Polite present: <span class=\"ko\">네모나요</span>. <span class=\"ko\">상자가 네모나요.</span> (The box is square.)" },
+
+    // === Quality (good / bad / pretty / ugly) ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">좋다</span>", back: "to be good / nice. Polite present: <span class=\"ko\">좋아요</span>. <span class=\"ko\">날씨가 좋아요.</span> (The weather is nice.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be bad\"", back: "<span class=\"ko\">나쁘다</span>. Polite present: <span class=\"ko\">나빠요</span> (으-drop, ㅏ vowel harmony). <span class=\"ko\">기분이 나빠요.</span> (I feel bad.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">예쁘다</span> in polite present", back: "to be pretty. <span class=\"ko\">예뻐요</span> (으-drop). <span class=\"ko\">꽃이 예뻐요.</span> (The flower is pretty.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be beautiful\"", back: "<span class=\"ko\">아름답다</span>. Polite present: <span class=\"ko\">아름다워요</span> (ㅂ-irregular). <span class=\"ko\">경치가 아름다워요.</span> (The scenery is beautiful.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">못생기다</span>", back: "to be ugly (of a person/face). Polite present: <span class=\"ko\">못생겼어요</span> — typically used in past form for present meaning. <span class=\"ko\">그 인형은 좀 못생겼어요.</span> (That doll is kind of ugly.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be cute\"", back: "<span class=\"ko\">귀엽다</span>. Polite present: <span class=\"ko\">귀여워요</span> (ㅂ-irregular). <span class=\"ko\">강아지가 귀여워요.</span> (The puppy is cute.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">멋있다</span>", back: "to be cool / stylish / awesome. Polite present: <span class=\"ko\">멋있어요</span>. <span class=\"ko\">저 차 멋있어요.</span> (That car is cool.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be good-looking (of a man)\"", back: "<span class=\"ko\">잘생기다</span>. Polite present: <span class=\"ko\">잘생겼어요</span> — typically used in past form for present meaning. <span class=\"ko\">배우가 잘생겼어요.</span> (The actor is handsome.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be new / novel\"", back: "<span class=\"ko\">새롭다</span>. Polite present: <span class=\"ko\">새로워요</span> (ㅂ-irregular). <span class=\"ko\">아이디어가 새로워요.</span> (The idea is new.)" },
+    { pos: "adjective", front: "Distinguish: <span class=\"ko\">새 vs 새롭다</span>", back: "<span class=\"ko\">새</span> is a determiner — \"new\" placed before a noun (<span class=\"ko\">새 책</span> = a new book). It does not conjugate. <span class=\"ko\">새롭다</span> is the descriptive verb \"to be new/novel,\" and conjugates (<span class=\"ko\">새로워요</span>)." },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">오래되다</span>", back: "to be old (of things, not people). Polite present: <span class=\"ko\">오래됐어요</span>. <span class=\"ko\">이 건물은 오래됐어요.</span> (This building is old.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be clean\"", back: "<span class=\"ko\">깨끗하다</span>. Polite present: <span class=\"ko\">깨끗해요</span> (하다). <span class=\"ko\">방이 깨끗해요.</span> (The room is clean.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">더럽다</span>", back: "to be dirty. Polite present: <span class=\"ko\">더러워요</span> (ㅂ-irregular). <span class=\"ko\">손이 더러워요.</span> (The hands are dirty.)" },
+
+    // === Quantity ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">많다</span>", back: "to be many / a lot. Polite present: <span class=\"ko\">많아요</span>. <span class=\"ko\">사람이 많아요.</span> (There are a lot of people.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be few / little (in quantity)\"", back: "<span class=\"ko\">적다</span>. Polite present: <span class=\"ko\">적어요</span>. <span class=\"ko\">돈이 적어요.</span> (There's little money.)" },
+    { pos: "adjective", front: "Distinguish: <span class=\"ko\">크다 vs 많다</span>", back: "<span class=\"ko\">크다</span> = to be big in size (<span class=\"ko\">집이 커요</span>). <span class=\"ko\">많다</span> = to be many / large in quantity (<span class=\"ko\">집이 많아요</span> = there are a lot of houses). Don't use <span class=\"ko\">크다</span> for amounts." },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">충분하다</span>", back: "to be enough / sufficient. Polite present: <span class=\"ko\">충분해요</span> (하다). <span class=\"ko\">시간이 충분해요.</span> (There's enough time.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be insufficient / lacking\"", back: "<span class=\"ko\">부족하다</span>. Polite present: <span class=\"ko\">부족해요</span> (하다). <span class=\"ko\">잠이 부족해요.</span> (I'm short on sleep.)" },
+
+    // === Temperature / weather ===
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">덥다</span> in polite present", back: "to be hot (weather). <span class=\"ko\">더워요</span> (ㅂ-irregular). <span class=\"ko\">오늘 정말 더워요.</span> (It's really hot today.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">춥다</span> in polite present", back: "to be cold (weather). <span class=\"ko\">추워요</span> (ㅂ-irregular). <span class=\"ko\">오늘 너무 추워요.</span> (It's too cold today.) Use for weather, not objects — for cold objects use <span class=\"ko\">차갑다</span>." },
+    { pos: "adjective", front: "Translate to Korean: \"to be warm\"", back: "<span class=\"ko\">따뜻하다</span>. Polite present: <span class=\"ko\">따뜻해요</span> (하다). <span class=\"ko\">차가 따뜻해요.</span> (The tea is warm.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">시원하다</span>", back: "to be cool / refreshing. Polite present: <span class=\"ko\">시원해요</span> (하다). <span class=\"ko\">바람이 시원해요.</span> (The breeze is refreshing.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">뜨겁다</span>", back: "to be hot (to the touch). Polite present: <span class=\"ko\">뜨거워요</span> (ㅂ-irregular). <span class=\"ko\">국이 뜨거워요.</span> (The soup is hot.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">차다</span>", back: "to be cold (object/liquid). Polite present: <span class=\"ko\">차요</span>. <span class=\"ko\">물이 차요.</span> (The water is cold.) Often interchangeable with <span class=\"ko\">차갑다</span>." },
+    { pos: "adjective", front: "Distinguish: <span class=\"ko\">춥다 vs 차갑다</span>", back: "<span class=\"ko\">춥다</span> = cold weather / a cold person feels (<span class=\"ko\">날씨가 추워요</span>). <span class=\"ko\">차갑다</span> = a cold object/liquid to the touch (<span class=\"ko\">물이 차가워요</span>). Both are ㅂ-irregular." },
+    { pos: "adjective", front: "Translate to Korean: \"to be cold (to the touch)\"", back: "<span class=\"ko\">차갑다</span>. Polite present: <span class=\"ko\">차가워요</span> (ㅂ-irregular). <span class=\"ko\">손이 차가워요.</span> (The hands are cold.) For weather use <span class=\"ko\">춥다</span>." },
+
+    // === Taste ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">맛있다</span>", back: "to be delicious. Polite present: <span class=\"ko\">맛있어요</span>. <span class=\"ko\">김치가 맛있어요.</span> (The kimchi is delicious.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to taste bad / be not tasty\"", back: "<span class=\"ko\">맛없다</span>. Polite present: <span class=\"ko\">맛없어요</span>. <span class=\"ko\">이 빵은 맛없어요.</span> (This bread tastes bad.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">달다</span> in polite present", back: "to be sweet. <span class=\"ko\">달아요</span> (ㄹ-stem, no drop here). <span class=\"ko\">사탕이 달아요.</span> (The candy is sweet.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be bitter (taste)\"", back: "<span class=\"ko\">쓰다</span>. Polite present: <span class=\"ko\">써요</span> (으-drop). <span class=\"ko\">약이 써요.</span> (The medicine is bitter.) Note: <span class=\"ko\">쓰다</span> also means \"to write\" / \"to use.\"" },
+    { pos: "adjective", front: "Translate to Korean: \"to be salty\"", back: "<span class=\"ko\">짜다</span>. Polite present: <span class=\"ko\">짜요</span>. <span class=\"ko\">국이 짜요.</span> (The soup is salty.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">시다</span>", back: "to be sour. Polite present: <span class=\"ko\">셔요</span> (vowel contraction ㅣ+어 → ㅕ). <span class=\"ko\">레몬이 셔요.</span> (The lemon is sour.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">맵다</span>", back: "to be spicy. Polite present: <span class=\"ko\">매워요</span> (ㅂ-irregular). <span class=\"ko\">떡볶이가 매워요.</span> (The tteokbokki is spicy.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be bland / not salty enough\"", back: "<span class=\"ko\">싱겁다</span>. Polite present: <span class=\"ko\">싱거워요</span> (ㅂ-irregular). <span class=\"ko\">국이 싱거워요.</span> (The soup is bland.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">고소하다</span>", back: "to be nutty / savory (like sesame, roasted nuts). Polite present: <span class=\"ko\">고소해요</span> (하다). <span class=\"ko\">참기름이 고소해요.</span> (The sesame oil is nutty.)" },
+
+    // === Speed / timing ===
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">빠르다</span> in polite present", back: "to be fast / quick. <span class=\"ko\">빨라요</span> (르-irregular: 르 → ㄹㄹ). <span class=\"ko\">기차가 빨라요.</span> (The train is fast.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be slow\"", back: "<span class=\"ko\">느리다</span>. Polite present: <span class=\"ko\">느려요</span> (regular ㅣ+어 → ㅕ). <span class=\"ko\">버스가 느려요.</span> (The bus is slow.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">늦다</span>", back: "to be late. Polite present: <span class=\"ko\">늦어요</span>. <span class=\"ko\">시간이 늦었어요.</span> (It's gotten late.) Also functions as a verb (\"to be late\" in arriving)." },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">이르다</span> in polite present", back: "to be early. <span class=\"ko\">일러요</span> (르-irregular). <span class=\"ko\">아직 일러요.</span> (It's still early.) Distinct from <span class=\"ko\">이르다</span> meaning \"to reach/arrive\" (러-irregular)." },
+
+    // === Emotion / state ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">기쁘다</span>", back: "to be glad / happy (about something). Polite present: <span class=\"ko\">기뻐요</span> (으-drop). <span class=\"ko\">소식을 들어서 기뻐요.</span> (I'm glad to hear the news.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be happy\"", back: "<span class=\"ko\">행복하다</span>. Polite present: <span class=\"ko\">행복해요</span> (하다). <span class=\"ko\">가족과 함께 있어서 행복해요.</span> (I'm happy to be with my family.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be sad\"", back: "<span class=\"ko\">슬프다</span>. Polite present: <span class=\"ko\">슬퍼요</span> (으-drop). <span class=\"ko\">영화가 슬퍼요.</span> (The movie is sad.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">화나다</span>", back: "to be angry / get angry. Polite present: <span class=\"ko\">화나요</span> (or <span class=\"ko\">화났어요</span> for the resulting state). <span class=\"ko\">엄마가 화났어요.</span> (Mom is angry.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">외롭다</span>", back: "to be lonely. Polite present: <span class=\"ko\">외로워요</span> (ㅂ-irregular). <span class=\"ko\">혼자 있어서 외로워요.</span> (I'm lonely being alone.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be scary / scared\"", back: "<span class=\"ko\">무섭다</span>. Polite present: <span class=\"ko\">무서워요</span> (ㅂ-irregular). <span class=\"ko\">이 영화 무서워요.</span> (This movie is scary.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be afraid / fearful\"", back: "<span class=\"ko\">두렵다</span>. Polite present: <span class=\"ko\">두려워요</span> (ㅂ-irregular). <span class=\"ko\">미래가 두려워요.</span> (I'm afraid of the future.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">불안하다</span>", back: "to be anxious / uneasy. Polite present: <span class=\"ko\">불안해요</span> (하다). <span class=\"ko\">시험 전에 불안해요.</span> (I'm anxious before the exam.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be comfortable\"", back: "<span class=\"ko\">편하다</span>. Polite present: <span class=\"ko\">편해요</span> (하다). <span class=\"ko\">이 의자가 편해요.</span> (This chair is comfortable.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">불편하다</span>", back: "to be uncomfortable / inconvenient. Polite present: <span class=\"ko\">불편해요</span> (하다). <span class=\"ko\">신발이 불편해요.</span> (The shoes are uncomfortable.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be tired\"", back: "<span class=\"ko\">피곤하다</span>. Polite present: <span class=\"ko\">피곤해요</span> (하다). <span class=\"ko\">오늘 너무 피곤해요.</span> (I'm so tired today.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">졸리다</span>", back: "to be sleepy. Polite present: <span class=\"ko\">졸려요</span>. <span class=\"ko\">수업 중에 졸려요.</span> (I'm sleepy during class.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">배고프다</span>", back: "to be hungry. Polite present: <span class=\"ko\">배고파요</span> (으-drop, ㅏ harmony). <span class=\"ko\">너무 배고파요.</span> (I'm so hungry.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">배부르다</span> in polite present", back: "to be full (after eating). <span class=\"ko\">배불러요</span> (르-irregular). <span class=\"ko\">많이 먹어서 배불러요.</span> (I ate a lot, so I'm full.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">아프다</span> in polite present", back: "to be sick / hurt / in pain. <span class=\"ko\">아파요</span> (으-drop, ㅏ harmony). <span class=\"ko\">머리가 아파요.</span> (My head hurts.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be healthy\"", back: "<span class=\"ko\">건강하다</span>. Polite present: <span class=\"ko\">건강해요</span> (하다). <span class=\"ko\">할머니가 건강해요.</span> (Grandmother is healthy.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">신나다</span>", back: "to be excited / pumped. Polite present: <span class=\"ko\">신나요</span> (or <span class=\"ko\">신났어요</span> for the resulting state). <span class=\"ko\">콘서트가 신나요.</span> (The concert is exciting.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be bored\"", back: "<span class=\"ko\">심심하다</span>. Polite present: <span class=\"ko\">심심해요</span> (하다). <span class=\"ko\">할 일이 없어서 심심해요.</span> (I'm bored with nothing to do.)" },
+
+    // === Difficulty ===
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">쉽다</span> in polite present", back: "to be easy. <span class=\"ko\">쉬워요</span> (ㅂ-irregular). <span class=\"ko\">한국어가 쉬워요.</span> (Korean is easy.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">어렵다</span> in polite present", back: "to be difficult. <span class=\"ko\">어려워요</span> (ㅂ-irregular). <span class=\"ko\">시험이 어려워요.</span> (The test is difficult.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be possible\"", back: "<span class=\"ko\">가능하다</span>. Polite present: <span class=\"ko\">가능해요</span> (하다). <span class=\"ko\">그건 가능해요.</span> (That is possible.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">불가능하다</span>", back: "to be impossible. Polite present: <span class=\"ko\">불가능해요</span> (하다). <span class=\"ko\">그건 불가능해요.</span> (That's impossible.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be complicated\"", back: "<span class=\"ko\">복잡하다</span>. Polite present: <span class=\"ko\">복잡해요</span> (하다). <span class=\"ko\">서울 지하철은 복잡해요.</span> (The Seoul subway is complicated.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">간단하다</span>", back: "to be simple. Polite present: <span class=\"ko\">간단해요</span> (하다). <span class=\"ko\">설명이 간단해요.</span> (The explanation is simple.)" },
+
+    // === Truth / correctness ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">맞다</span>", back: "to be correct / right. Polite present: <span class=\"ko\">맞아요</span>. <span class=\"ko\">답이 맞아요.</span> (The answer is right.) Also used as a verb meaning \"to fit.\"" },
+    { pos: "adjective", front: "Translate to Korean: \"to be wrong / incorrect\"", back: "<span class=\"ko\">틀리다</span>. Polite present: <span class=\"ko\">틀려요</span>. <span class=\"ko\">그 답은 틀려요.</span> (That answer is wrong.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">같다</span>", back: "to be the same. Polite present: <span class=\"ko\">같아요</span>. <span class=\"ko\">우리 나이가 같아요.</span> (Our ages are the same.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">다르다</span> in polite present", back: "to be different. <span class=\"ko\">달라요</span> (르-irregular). <span class=\"ko\">색깔이 달라요.</span> (The colors are different.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be similar\"", back: "<span class=\"ko\">비슷하다</span>. Polite present: <span class=\"ko\">비슷해요</span> (하다). <span class=\"ko\">두 사람이 비슷해요.</span> (The two people are similar.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">정확하다</span>", back: "to be exact / accurate. Polite present: <span class=\"ko\">정확해요</span> (하다). <span class=\"ko\">시계가 정확해요.</span> (The clock is accurate.)" },
+
+    // === Color (ㅎ-irregular) ===
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">빨갛다</span> in polite present", back: "to be red. <span class=\"ko\">빨개요</span> (ㅎ-irregular: ㅎ drops, vowel becomes ㅐ). <span class=\"ko\">사과가 빨개요.</span> (The apple is red.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">파랗다</span> in polite present", back: "to be blue. <span class=\"ko\">파래요</span> (ㅎ-irregular). <span class=\"ko\">하늘이 파래요.</span> (The sky is blue.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">노랗다</span> in polite present", back: "to be yellow. <span class=\"ko\">노래요</span> (ㅎ-irregular). <span class=\"ko\">바나나가 노래요.</span> (The banana is yellow.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">검다</span>", back: "to be black. Polite present: <span class=\"ko\">검어요</span> (regular). <span class=\"ko\">머리가 검어요.</span> (The hair is black.) Colloquially <span class=\"ko\">까맣다</span> (ㅎ-irregular) is more common." },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">하얗다</span> in polite present", back: "to be white. <span class=\"ko\">하얘요</span> (ㅎ-irregular). <span class=\"ko\">눈이 하얘요.</span> (The snow is white.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">까맣다</span> in polite present", back: "to be black (colloquial). <span class=\"ko\">까매요</span> (ㅎ-irregular). <span class=\"ko\">고양이가 까매요.</span> (The cat is black.)" },
+
+    // === Importance / character / safety ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">중요하다</span>", back: "to be important. Polite present: <span class=\"ko\">중요해요</span> (하다). <span class=\"ko\">건강이 중요해요.</span> (Health is important.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be necessary / needed\"", back: "<span class=\"ko\">필요하다</span>. Polite present: <span class=\"ko\">필요해요</span> (하다). <span class=\"ko\">도움이 필요해요.</span> (I need help.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">위험하다</span>", back: "to be dangerous. Polite present: <span class=\"ko\">위험해요</span> (하다). <span class=\"ko\">밤에 운전하면 위험해요.</span> (Driving at night is dangerous.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be safe\"", back: "<span class=\"ko\">안전하다</span>. Polite present: <span class=\"ko\">안전해요</span> (하다). <span class=\"ko\">이 동네는 안전해요.</span> (This neighborhood is safe.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">유명하다</span>", back: "to be famous. Polite present: <span class=\"ko\">유명해요</span> (하다). <span class=\"ko\">그 식당이 유명해요.</span> (That restaurant is famous.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be kind / friendly\"", back: "<span class=\"ko\">친절하다</span>. Polite present: <span class=\"ko\">친절해요</span> (하다). <span class=\"ko\">직원이 친절해요.</span> (The staff is kind.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">똑똑하다</span>", back: "to be smart / clever. Polite present: <span class=\"ko\">똑똑해요</span> (하다). <span class=\"ko\">아이가 똑똑해요.</span> (The child is smart.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be honest / straightforward\"", back: "<span class=\"ko\">솔직하다</span>. Polite present: <span class=\"ko\">솔직해요</span> (하다). <span class=\"ko\">친구가 솔직해요.</span> (My friend is honest.)" },
+    { pos: "adjective", front: "Conjugate: <span class=\"ko\">게으르다</span> in polite present", back: "to be lazy. <span class=\"ko\">게을러요</span> (르-irregular). <span class=\"ko\">동생이 게을러요.</span> (My younger sibling is lazy.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be diligent / hardworking\"", back: "<span class=\"ko\">부지런하다</span>. Polite present: <span class=\"ko\">부지런해요</span> (하다). <span class=\"ko\">언니가 부지런해요.</span> (My older sister is diligent.)" },
+
+    // === Difficulty / interest of tasks ===
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">힘들다</span>", back: "to be tough / hard / exhausting. Polite present: <span class=\"ko\">힘들어요</span> (ㄹ-stem). <span class=\"ko\">일이 힘들어요.</span> (Work is exhausting.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be fun / interesting\"", back: "<span class=\"ko\">재미있다</span>. Polite present: <span class=\"ko\">재미있어요</span>. <span class=\"ko\">이 책이 재미있어요.</span> (This book is fun.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">재미없다</span>", back: "to be uninteresting / not fun. Polite present: <span class=\"ko\">재미없어요</span>. <span class=\"ko\">그 영화는 재미없어요.</span> (That movie isn't fun.)" },
+    { pos: "adjective", front: "Translate to Korean: \"to be boring / tedious\"", back: "<span class=\"ko\">지루하다</span>. Polite present: <span class=\"ko\">지루해요</span> (하다). <span class=\"ko\">수업이 지루해요.</span> (The class is boring.)" },
+    { pos: "adjective", front: "Translate to English: <span class=\"ko\">흥미롭다</span>", back: "to be interesting / intriguing. Polite present: <span class=\"ko\">흥미로워요</span> (ㅂ-irregular). <span class=\"ko\">주제가 흥미로워요.</span> (The topic is intriguing.)" },
+
+    // ===== ADVERBS (부사) =====
+
+    // Frequency
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">자주</span>", back: "often, frequently. <span class=\"ko\">저는 자주 영화를 봐요.</span> (I often watch movies.)" },
+    { pos: "adverb", front: "Translate to Korean: \"sometimes\"", back: "<span class=\"ko\">가끔</span>. <span class=\"ko\">가끔 커피를 마셔요.</span> (I sometimes drink coffee.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">항상</span>", back: "always. <span class=\"ko\">그는 항상 늦어요.</span> (He's always late.) Synonym: <span class=\"ko\">늘</span>." },
+    { pos: "adverb", front: "Translate to Korean: \"usually\"", back: "<span class=\"ko\">보통</span>. <span class=\"ko\">보통 일곱 시에 일어나요.</span> (I usually wake up at seven.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">별로</span>", back: "not particularly, not really. Pairs with negative verb. <span class=\"ko\">별로 안 좋아해요.</span> (I don't really like it.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">절대</span>", back: "absolutely (not), never. Almost always with negation. <span class=\"ko\">절대 안 가요.</span> (I will never go.)" },
+    { pos: "adverb", front: "Translate to Korean: \"almost / nearly\"", back: "<span class=\"ko\">거의</span>. <span class=\"ko\">거의 다 왔어요.</span> (We're almost there.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">매일</span>", back: "every day. <span class=\"ko\">매일 운동해요.</span> (I exercise every day.)" },
+    { pos: "adverb", front: "Distinguish: <span class=\"ko\">또 vs 다시</span>", back: "Both = again. <span class=\"ko\">또</span> = once more / on top of that (often unwanted). <span class=\"ko\">다시</span> = redo, try again. <span class=\"ko\">또 비가 와요.</span> (It's raining again.)" },
+
+    // Time
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">지금</span>", back: "now, right now. <span class=\"ko\">지금 뭐 해요?</span> (What are you doing now?)" },
+    { pos: "adverb", front: "Translate to Korean: \"soon\"", back: "<span class=\"ko\">곧</span>. <span class=\"ko\">곧 도착해요.</span> (I'll arrive soon.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">이미</span>", back: "already. <span class=\"ko\">이미 먹었어요.</span> (I already ate.) Synonym: <span class=\"ko\">벌써</span>." },
+    { pos: "adverb", front: "Translate to Korean: \"still / not yet\"", back: "<span class=\"ko\">아직</span>. With positive = still; with negative = not yet. <span class=\"ko\">아직 안 왔어요.</span> (He hasn't come yet.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">미리</span>", back: "in advance, beforehand. <span class=\"ko\">미리 예약했어요.</span> (I booked in advance.)" },
+    { pos: "adverb", front: "Translate to Korean: \"for a long time\"", back: "<span class=\"ko\">오랫동안</span>. <span class=\"ko\">오랫동안 못 봤어요.</span> (I haven't seen you for a long time.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">빨리</span>", back: "quickly, fast (manner of action). <span class=\"ko\">빨리 오세요!</span> (Come quickly!)" },
+    { pos: "adverb", front: "Translate to Korean: \"slowly\"", back: "<span class=\"ko\">천천히</span>. <span class=\"ko\">천천히 말해 주세요.</span> (Please speak slowly.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">일찍</span>", back: "early. <span class=\"ko\">오늘 일찍 잤어요.</span> (I went to bed early today.)" },
+    { pos: "adverb", front: "Translate to Korean: \"late (not on time)\"", back: "<span class=\"ko\">늦게</span>. <span class=\"ko\">늦게 일어났어요.</span> (I woke up late.) Verb form: <span class=\"ko\">늦다</span>." },
+
+    // Manner
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">잘</span>", back: "well, skillfully. <span class=\"ko\">한국어를 잘해요.</span> (I speak Korean well.) Opposite: <span class=\"ko\">못</span>." },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">못</span>", back: "cannot (ability negation), placed before verb. <span class=\"ko\">수영을 못해요.</span> (I can't swim.) Different from <span class=\"ko\">안</span> (won't)." },
+    { pos: "adverb", front: "Distinguish: <span class=\"ko\">함께 vs 같이</span>", back: "Both = together. <span class=\"ko\">같이</span> is everyday/casual; <span class=\"ko\">함께</span> is slightly more formal/literary. <span class=\"ko\">같이 가요!</span> (Let's go together!)" },
+    { pos: "adverb", front: "Translate to Korean: \"alone / by oneself\"", back: "<span class=\"ko\">혼자</span>. <span class=\"ko\">혼자 살아요.</span> (I live alone.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">열심히</span>", back: "diligently, hard (with effort). <span class=\"ko\">열심히 공부해요.</span> (I study hard.)" },
+    { pos: "adverb", front: "Translate to Korean: \"quietly\"", back: "<span class=\"ko\">조용히</span>. <span class=\"ko\">조용히 해 주세요.</span> (Please be quiet.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">갑자기</span>", back: "suddenly, all of a sudden. <span class=\"ko\">갑자기 비가 왔어요.</span> (It suddenly rained.)" },
+
+    // Degree
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">너무</span>", back: "too / too much (often = very, in casual use). <span class=\"ko\">너무 비싸요.</span> (It's too expensive.)" },
+    { pos: "adverb", front: "Distinguish: <span class=\"ko\">정말 vs 진짜</span>", back: "Both = really, truly. <span class=\"ko\">정말</span> is neutral; <span class=\"ko\">진짜</span> is more colloquial/emphatic. <span class=\"ko\">진짜 맛있어요!</span> (It's really tasty!)" },
+    { pos: "adverb", front: "Translate to Korean: \"very (spoken)\"", back: "<span class=\"ko\">아주</span>. <span class=\"ko\">아주 좋아요.</span> (It's very good.) More formal/written: <span class=\"ko\">매우</span>." },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">조금</span>", back: "a little, a bit. Casual short form: <span class=\"ko\">좀</span>. <span class=\"ko\">조금 매워요.</span> (It's a little spicy.)" },
+    { pos: "adverb", front: "Translate to Korean: \"a lot / many\"", back: "<span class=\"ko\">많이</span>. <span class=\"ko\">많이 드세요.</span> (Eat a lot. = polite meal invitation.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">그냥</span>", back: "just, simply, for no special reason. <span class=\"ko\">그냥 물어봤어요.</span> (I just asked.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">더</span>", back: "more. <span class=\"ko\">더 주세요.</span> (Please give me more.) Opposite: <span class=\"ko\">덜</span> (less)." },
+    { pos: "adverb", front: "Distinguish: <span class=\"ko\">가장 vs 제일</span>", back: "Both = most, -est (superlative). <span class=\"ko\">제일</span> is conversational; <span class=\"ko\">가장</span> slightly more formal. <span class=\"ko\">제일 좋아해요.</span> (I like it most.)" },
+
+    // Position
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">위에</span>", back: "on/above. Position noun + <span class=\"ko\">에</span>. <span class=\"ko\">책상 위에 있어요.</span> (It's on the desk.)" },
+    { pos: "adverb", front: "Translate to Korean: \"under / below\"", back: "<span class=\"ko\">밑에</span> or <span class=\"ko\">아래에</span>. <span class=\"ko\">의자 밑에 있어요.</span> (It's under the chair.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">앞에</span>", back: "in front of. <span class=\"ko\">학교 앞에서 만나요.</span> (Let's meet in front of the school.) Opposite: <span class=\"ko\">뒤에</span>." },
+    { pos: "adverb", front: "Translate to Korean: \"next to / beside\"", back: "<span class=\"ko\">옆에</span>. <span class=\"ko\">제 옆에 앉으세요.</span> (Please sit next to me.)" },
+    { pos: "adverb", front: "Translate to English: <span class=\"ko\">안에</span>", back: "inside. <span class=\"ko\">가방 안에 있어요.</span> (It's inside the bag.) Opposite: <span class=\"ko\">밖에</span> (outside)." },
+
+    // ===== PRONOUNS (대명사) =====
+
+    { pos: "pronoun", front: "Distinguish: <span class=\"ko\">나 vs 저</span>", back: "Both = I. <span class=\"ko\">나</span> is plain (with friends/juniors); <span class=\"ko\">저</span> is humble (strangers/elders/formal). <span class=\"ko\">저는 학생이에요.</span> (I'm a student.)" },
+    { pos: "pronoun", front: "Translate to English: <span class=\"ko\">우리</span>", back: "we, our; also \"my\" for shared things (<span class=\"ko\">우리 집</span> = my/our house). Humble form: <span class=\"ko\">저희</span>." },
+    { pos: "pronoun", front: "Translate to Korean: \"we (humble)\"", back: "<span class=\"ko\">저희</span>. Used in formal/business contexts. <span class=\"ko\">저희 회사는 서울에 있어요.</span> (Our company is in Seoul.)" },
+    { pos: "pronoun", front: "Translate to English: <span class=\"ko\">너</span>", back: "you (casual, only with close friends/juniors). Otherwise, use the person's name + title. Subject form: <span class=\"ko\">네가</span>." },
+    { pos: "pronoun", front: "Distinguish: <span class=\"ko\">당신</span> — when to use?", back: "you (formal), but tricky: used between spouses, in songs/translations, or confrontationally. Avoid with strangers — use name + <span class=\"ko\">씨</span> or title instead." },
+    { pos: "pronoun", front: "Translate to English: <span class=\"ko\">그</span> / <span class=\"ko\">그녀</span>", back: "he / she. Mostly literary or in translations; spoken Korean prefers names or <span class=\"ko\">그 사람</span>. Honorific: <span class=\"ko\">그분</span>." },
+    { pos: "pronoun", front: "Translate to Korean: \"this thing / this one\"", back: "<span class=\"ko\">이것</span> (formal/written) or <span class=\"ko\">이거</span> (casual/spoken). <span class=\"ko\">이거 뭐예요?</span> (What is this?)" },
+    { pos: "pronoun", front: "Translate to English: <span class=\"ko\">그것</span>", back: "that (near listener, or known/mentioned). Casual: <span class=\"ko\">그거</span>. <span class=\"ko\">그거 주세요.</span> (Please give me that.)" },
+    { pos: "pronoun", front: "Translate to Korean: \"that thing over there\"", back: "<span class=\"ko\">저것</span> / casual <span class=\"ko\">저거</span>. Far from both speaker and listener. <span class=\"ko\">저거 얼마예요?</span> (How much is that one over there?)" },
+    { pos: "pronoun", front: "Translate to English: <span class=\"ko\">그분</span>", back: "that person (honorific). Use for elders, superiors, respected people. Plain: <span class=\"ko\">그 사람</span>; very plain/slangy: <span class=\"ko\">걔</span>." },
+
+    // ===== INTERJECTIONS / FIXED EXPRESSIONS (감탄사) =====
+
+    { pos: "interjection", front: "Translate: \"hello (polite, anytime)\"", back: "<span class=\"ko\">안녕하세요</span>. Universal greeting. Casual form between friends: <span class=\"ko\">안녕</span>." },
+    { pos: "interjection", front: "Translate: \"How do you say goodbye to someone who is leaving (you're staying)?\"", back: "<span class=\"ko\">안녕히 가세요.</span> Literally \"go in peace.\" Mirror: <span class=\"ko\">안녕히 계세요</span> = said to the one staying." },
+    { pos: "interjection", front: "Translate: \"How do you say goodbye to someone who is staying (you're leaving)?\"", back: "<span class=\"ko\">안녕히 계세요.</span> Literally \"stay in peace.\" Mirror of <span class=\"ko\">안녕히 가세요</span> said to the one leaving." },
+    { pos: "interjection", front: "Translate to English: <span class=\"ko\">네</span>", back: "yes (polite). Also \"I see / uh-huh\" to acknowledge while listening. Casual yes: <span class=\"ko\">응</span> or <span class=\"ko\">어</span>." },
+    { pos: "interjection", front: "Translate to Korean: \"no\" (polite)", back: "<span class=\"ko\">아니요</span>. Casual: <span class=\"ko\">아니</span>. Note: Korean \"no\" often disagrees with the question's polarity, not the fact." },
+    { pos: "interjection", front: "Translate: \"thank you\" (formal/polite)", back: "<span class=\"ko\">감사합니다</span> (most formal) or <span class=\"ko\">고마워요</span> (polite, warmer). Casual: <span class=\"ko\">고마워</span>." },
+    { pos: "interjection", front: "Translate: \"I'm sorry\" (formal apology)", back: "<span class=\"ko\">죄송합니다</span> (most formal) or <span class=\"ko\">미안해요</span> (polite, lighter). Casual: <span class=\"ko\">미안해</span>." },
+    { pos: "interjection", front: "Translate to English: <span class=\"ko\">괜찮아요</span>", back: "it's okay / I'm fine / no worries. Multipurpose response to apologies, offers, or \"how are you?\" Casual: <span class=\"ko\">괜찮아</span>." },
+    { pos: "interjection", front: "Translate to English: <span class=\"ko\">아이고</span>", back: "oh dear, oh my, oof. Reaction to surprise, dismay, exhaustion, or sympathy. Very common across all ages." },
+    { pos: "interjection", front: "Translate to English: <span class=\"ko\">헐</span>", back: "no way / OMG / whoa. Slangy reaction expressing shock or disbelief. Younger speakers; informal contexts only." },
+    { pos: "interjection", front: "Translate: \"excuse me\" (to get a stranger's attention, e.g. server)", back: "<span class=\"ko\">저기요</span>. The standard call-out in restaurants/shops. Not for apologies — use <span class=\"ko\">죄송합니다</span> for that." }
+  ];
+
+  const grammarCards = [
     { section: "s0", type: "recall", front: "Recall: what is <span class=\"ko\">받침</span>?", back: "The final consonant of a Hangul block — the \"supporting floor\". It drives which particle/ending variant attaches. <span class=\"ko\">학</span> has 받침; <span class=\"ko\">사</span> doesn't." },
     { section: "s0", type: "recall", front: "Recall: how do you get a verb stem from the dictionary form?", back: "Drop the <span class=\"ko\">다</span>. All endings hook onto the stem. <span class=\"ko\">먹다 → 먹-</span> (eat); <span class=\"ko\">예쁘다 → 예쁘-</span> (be pretty)." },
     { section: "s0", type: "recall", front: "Recall: what is the cushion-vowel rule, in one line?", back: "Insert a tiny vowel (<span class=\"ko\">으</span>, <span class=\"ko\">스</span>, <span class=\"ko\">이</span>) when a consonant-final word would crash into a consonant-starting ending. <span class=\"ko\">먹+(으)면 → 먹으면</span>; <span class=\"ko\">가+(으)면 → 가면</span>." },
@@ -847,7 +1595,8 @@
     { section: "s24", type: "identify", front: "Identify the connector called 'the duct tape of Korean conversation'.", back: "<span class=\"ko\">~는데/(으)ㄴ데</span> — background 'but/and'. Embrace it; it sets up almost any follow-up clause." }
   ];
 
-  let deck = cards.map((_, i) => i);
+  let mode = 'grammar';
+  let deck = [];
   let pos = 0;
 
   const cardEl = document.getElementById('card');
@@ -861,17 +1610,55 @@
   const nextBtn = document.getElementById('next');
   const shuffleBtn = document.getElementById('shuffle');
   const filterEl = document.getElementById('filter');
+  const tabBtns = document.querySelectorAll('.mode-tabs .tab');
 
-  function sectionLabel(section) {
-    const num = section.slice(1).padStart(2, '0');
-    const title = sectionTitles[section] || '';
-    return `§${num} · ${title}`;
+  function activeCards() {
+    return mode === 'grammar' ? grammarCards : vocabCards;
+  }
+  function categoryKey() {
+    return mode === 'grammar' ? 'section' : 'pos';
+  }
+  function categoryLabel(card) {
+    if (mode === 'grammar') {
+      const num = card.section.slice(1).padStart(2, '0');
+      return `§${num} · ${sectionTitles[card.section] || ''}`;
+    }
+    const p = posTitles[card.pos];
+    return p ? `${p.en} · ${p.ko}` : (card.pos || '—');
+  }
+
+  function rebuildFilterOptions() {
+    filterEl.innerHTML = '';
+    const allOpt = document.createElement('option');
+    allOpt.value = 'all';
+    allOpt.textContent = mode === 'grammar' ? 'All sections' : 'All parts of speech';
+    filterEl.appendChild(allOpt);
+
+    if (mode === 'grammar') {
+      Object.entries(sectionTitles).forEach(([key, title]) => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        const num = key.slice(1).padStart(2, '0');
+        opt.textContent = `§${num} · ${title}`;
+        filterEl.appendChild(opt);
+      });
+    } else {
+      // Only show POS values that actually have cards
+      const present = new Set(vocabCards.map(c => c.pos));
+      Object.entries(posTitles).forEach(([key, p]) => {
+        if (!present.has(key)) return;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = `${p.en} · ${p.ko}`;
+        filterEl.appendChild(opt);
+      });
+    }
   }
 
   function render() {
     if (deck.length === 0) {
-      frontEl.textContent = 'No cards in this section.';
-      backEl.textContent = '';
+      frontEl.innerHTML = '<p>No cards in this filter.</p>';
+      backEl.innerHTML = '';
       sectionFrontEl.textContent = '—';
       sectionBackEl.textContent = '—';
       typeFrontEl.textContent = '';
@@ -880,10 +1667,11 @@
       cardEl.setAttribute('aria-pressed', 'false');
       return;
     }
-    const card = cards[deck[pos]];
+    const all = activeCards();
+    const card = all[deck[pos]];
     frontEl.innerHTML = '<p>' + card.front + '</p>';
     backEl.innerHTML = '<p>' + card.back + '</p>';
-    const label = sectionLabel(card.section);
+    const label = categoryLabel(card);
     sectionFrontEl.textContent = label;
     sectionBackEl.textContent = label + ' · answer';
     typeFrontEl.textContent = card.type ? card.type.toUpperCase() : '';
@@ -915,12 +1703,27 @@
 
   function applyFilter() {
     const value = filterEl.value;
-    deck = cards
+    const all = activeCards();
+    const key = categoryKey();
+    deck = all
       .map((c, i) => ({ c, i }))
-      .filter(({ c }) => value === 'all' || c.section === value)
+      .filter(({ c }) => value === 'all' || c[key] === value)
       .map(({ i }) => i);
     pos = 0;
     render();
+  }
+
+  function setMode(newMode) {
+    if (mode === newMode) return;
+    mode = newMode;
+    tabBtns.forEach(b => {
+      const isActive = b.dataset.mode === mode;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    rebuildFilterOptions();
+    filterEl.value = 'all';
+    applyFilter();
   }
 
   cardEl.addEventListener('click', flip);
@@ -928,6 +1731,7 @@
   nextBtn.addEventListener('click', () => go(1));
   shuffleBtn.addEventListener('click', shuffle);
   filterEl.addEventListener('change', applyFilter);
+  tabBtns.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
 
   document.addEventListener('keydown', (e) => {
     if (e.target.matches('select, input, textarea')) return;
@@ -936,7 +1740,9 @@
     if (e.key === 'ArrowRight') { e.preventDefault(); go(1);  return; }
   });
 
-  render();
+  // Initial population
+  rebuildFilterOptions();
+  applyFilter();
 </script>
 
 </body>
