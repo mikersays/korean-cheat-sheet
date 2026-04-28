@@ -17,7 +17,7 @@ from pathlib import Path
 from collections import Counter
 
 ALLOWED_TYPES = {"recall", "translate", "conjugate", "identify", "choose"}
-ALLOWED_POS = {"noun", "verb", "adjective", "adverb", "pronoun", "interjection"}
+ALLOWED_POS = {"noun", "verb", "adjective", "adverb", "pronoun", "interjection", "number"}
 DIRECTIVES = ("Recall", "Translate", "Conjugate", "Identify", "Choose", "Apply", "Distinguish", "Arrange")
 
 
